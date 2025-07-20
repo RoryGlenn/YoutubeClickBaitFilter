@@ -1,48 +1,83 @@
-// Load saved settings
-chrome.storage.sync.get({
-    enabled: true,
-    filterBad: true,
-    filterClickbait: true,
-    filterUppercase: true,
-    filterPunctuation: true
-}, (settings) => {
-    document.getElementById('filter-enabled').checked = settings.enabled;
-    document.getElementById('filter-bad').checked = settings.filterBad;
-    document.getElementById('filter-clickbait').checked = settings.filterClickbait;
-    document.getElementById('filter-uppercase').checked = settings.filterUppercase;
-    document.getElementById('filter-punctuation').checked = settings.filterPunctuation;
-});
+// popup.js
 
-// Save settings when changed
+/**
+ * Queries the current tab for its blocked count and updates the UI.
+ */
+function updateBlockedCount() {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            { type: 'getBlockedCount' },
+            (response) => {
+                const el = document.getElementById('blocked-count');
+                el.textContent =
+                    response && typeof response.blockedCount === 'number'
+                        ? response.blockedCount
+                        : 'N/A';
+            }
+        );
+    });
+}
+
+/**
+ * Load saved settings from chrome.storage and initialize the controls.
+ */
+chrome.storage.sync.get(
+    {
+        enabled: true,
+        filterBad: true,
+        filterClickbait: true,
+        filterUppercase: true,
+        filterPunctuation: true,
+    },
+    (settings) => {
+        document.getElementById('filter-enabled').checked = settings.enabled;
+        document.getElementById('filter-bad').checked = settings.filterBad;
+        document.getElementById('filter-clickbait').checked = settings.filterClickbait;
+        document.getElementById('filter-uppercase').checked = settings.filterUppercase;
+        document.getElementById('filter-punctuation').checked = settings.filterPunctuation;
+
+        // Fetch and display the initial blocked count
+        updateBlockedCount();
+    }
+);
+
+/**
+ * Read the current checkbox states and persist them, then notify the content-script.
+ */
 function saveSettings() {
     const settings = {
         enabled: document.getElementById('filter-enabled').checked,
         filterBad: document.getElementById('filter-bad').checked,
         filterClickbait: document.getElementById('filter-clickbait').checked,
         filterUppercase: document.getElementById('filter-uppercase').checked,
-        filterPunctuation: document.getElementById('filter-punctuation').checked
+        filterPunctuation: document.getElementById('filter-punctuation').checked,
     };
-    
-    chrome.storage.sync.set(settings);
-    
-    // Send message to content script to update settings
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, {type: 'updateSettings', settings: settings});
+
+    // Persist settings, then message the content-script and refresh count
+    chrome.storage.sync.set(settings, () => {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            chrome.tabs.sendMessage(
+                tabs[0].id,
+                { type: 'updateSettings', settings },
+                () => {
+                    // After settings applied, update the count display
+                    updateBlockedCount();
+                }
+            );
+        });
     });
 }
 
-// Add event listeners
-document.getElementById('filter-enabled').addEventListener('change', saveSettings);
-document.getElementById('filter-bad').addEventListener('change', saveSettings);
-document.getElementById('filter-clickbait').addEventListener('change', saveSettings);
-document.getElementById('filter-uppercase').addEventListener('change', saveSettings);
-document.getElementById('filter-punctuation').addEventListener('change', saveSettings);
-
-// Fetch and display the number of blocked videos
-chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, {type: 'getBlockedCount'}, (response) => {
-        if (response && typeof response.blockedCount === 'number') {
-            document.getElementById('blocked-count').textContent = response.blockedCount;
-        }
-    });
+// Wire up all checkbox changes to saveSettings()
+[
+    'enabled',
+    'bad',
+    'clickbait',
+    'uppercase',
+    'punctuation',
+].forEach((key) => {
+    document
+        .getElementById(`filter-${key}`)
+        .addEventListener('change', saveSettings);
 });
