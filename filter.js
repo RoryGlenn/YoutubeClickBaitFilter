@@ -1,6 +1,5 @@
-// filter.js
-
 let blockedCount = 0;
+
 let userSettings = {
     enabled: true,
     filterBad: true,
@@ -14,12 +13,41 @@ let userSettings = {
      * List of keywords indicating negative or crisis-related content.
      * @type {string[]}
      */
-    const BAD = [
-        'crisis', 'panic', 'epidemic', 'collapse',
-        'emergency', 'disaster', 'catastrophe', 'calamity', 'cataclysm', 'debacle',
-        'breakdown', 'meltdown', 'crash',
-        'turmoil', 'upheaval', 'chaos', 'havoc', 'anarchy', 'uproar', 'mayhem', 'frenzy',
-        'pandemic', 'outbreak', 'plague', 'contagion',
+    const NEGATIVE = [
+        'anarchy',
+        'breakdown',
+        'calamity',
+        'cataclysm',
+        'catastrophe',
+        'chaos',
+        'collapse',
+        'contagion',
+        'crash',
+        'crisis',
+        'debacle',
+        'disaster',
+        'emergency',
+        'epidemic',
+        'exclusive',
+        'exposed',
+        'frenzy',
+        'hacks',
+        'havoc',
+        'mayhem',
+        'meltdown',
+        'outbreak',
+        'pandemic',
+        'panic',
+        'plague',
+        'revealed',
+        'secrets',
+        'shocking',
+        'turmoil',
+        'unbelievable',
+        'upheaval',
+        'uproar',
+        'urgent',
+        'warning',
     ];
 
     /**
@@ -27,74 +55,102 @@ let userSettings = {
      * @type {string[]}
      */
     const CLICKBAIT = [
-        'act fast',
-        'act now',
         'about to crack',
         'about to explode',
+        'act fast',
+        'act now',
         'are ruining the',
+        'before and after',
         'before it disappears',
         'before it\'s too late',
         'blows your mind',
         'boost your',
         'breaking news',
+        'caught in the act',
         'caught on camera',
+        'confession',
+        'debunked',
         'don\'t let this happen',
         'dont let this happen',
-        'exclusive',
-        'exposed',
-        'financial crisis',
+        'epic fail',
+        'exclusive footage',
+        'extreme makeover',
+        'fails compilation',
         'final warning',
+        'financial crisis',
         'game changer',
         'going to crack',
+        'gone viral',
         'gone wrong',
-        'government CONFIRMED',
+        'government confirmed',
         'hack your',
-        'hacks',
+        'hidden agenda',
+        'hidden hack',
         'hidden truth',
         'horrifying truth',
-        'incredible',
+        'incredible secret',
         'jaw-dropping',
+        'jaw-dropping secrets',
+        'just dropped',
         'just leaked',
         'life hack',
+        'life changing',
         'life-changing',
+        'life-changing hack',
+        'life or death situation',
+        'miracle hack',
+        'mind blowing',
         'mind-blowing',
-        'miracle',
+        'mind-blowing hack',
+        'mind-blowing secrets',
+        'massive fail',
         'must see',
         'must watch',
         'never before',
+        'never before seen',
+        'offer ends',
         'one simple trick',
         'one trick to',
-        'offer ends',
         'only way to',
+        'prepare to be amazed',
         'read this before',
-        'revealed',
+        'scientists hate him',
+        'secret hack',
         'secret weapon',
-        'secrets',
+        'secrets of',
         'shocked the world',
-        'shocking',
+        'shocking discovery',
+        'shocking reveal',
+        'shocking revelation',
+        'shocking truth',
         'simple trick',
+        'snake oil',
         'starting to crack',
         'time bomb',
         'today only',
-        'top ',
-        'ultimate guide',
-        'unbelievable',
-        'URGENT',
-        'WARNING',
-        'ways to',
-        'what happens next',
-        'what nobody tells you',
-        'what they don\'t want you to know',
+        'transformation',
+        'this will change everything',
         'the one thing',
         'the reason why',
         'the real reason',
         'the truth about',
         'they lied to us',
         'they lied to you',
+        'ultimate guide',
+        'ultimate secret',
+        'underestimated',
+        'unseen footage',
+        'viral sensation',
+        'ways to',
+        'what happens next',
+        'what nobody tells you',
+        'what they don\'t want you to know',
+        'you have to see this',
         'you need to know',
         'you need to see this',
         'you won\'t believe',
         'you won\'t believe what',
+        'you won’t believe your eyes',
         'you\'re missing out'
     ];
 
@@ -114,7 +170,7 @@ let userSettings = {
      * @returns {boolean} True if a BAD keyword is present.
      */
     function isBad(text) {
-        return BAD.some(word => text.toLowerCase().includes(word));
+        return NEGATIVE.some(word => text.toLowerCase().includes(word));
     }
 
     /**
@@ -224,7 +280,6 @@ let userSettings = {
 
         if (message.type === 'getBlockedCount') {
             sendResponse({blockedCount});
-            return;
         }
     });
 })();
