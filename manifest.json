@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube ClickBait Filter",
+  "version": "1.0",
+  "description": "Filter out negative and clickbait content from YouTube",
+
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+
+  "host_permissions": [
+    "*://www.youtube.com/*"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["*://www.youtube.com/*"],
+      "js": ["filter.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "YouTube ClickBait Filter"
+  }
+}

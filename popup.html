@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            width: 250px;
+            padding: 15px;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        .header {
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #333;
+        }
+        .count {
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .setting {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+        .setting input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        .setting label {
+            cursor: pointer;
+            flex: 1;
+        }
+        .main-toggle {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+        .main-toggle label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">YouTube ClickBait Filter</div>
+    <div class="count">Blocked videos: <span id="blocked-count">0</span></div>
+    
+    <div class="setting main-toggle">
+        <input type="checkbox" id="filter-enabled">
+        <label for="filter-enabled">Enable Filter</label>
+    </div>
+    
+    <div class="setting">
+        <input type="checkbox" id="filter-bad">
+        <label for="filter-bad">Crisis Keywords</label>
+    </div>
+    
+    <div class="setting">
+        <input type="checkbox" id="filter-clickbait">
+        <label for="filter-clickbait">Clickbait Phrases</label>
+    </div>
+    
+    <div class="setting">
+        <input type="checkbox" id="filter-uppercase">
+        <label for="filter-uppercase">Excessive CAPS</label>
+    </div>
+    
+    <div class="setting">
+        <input type="checkbox" id="filter-punctuation">
+        <label for="filter-punctuation">Excessive !!! or ???</label>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>
