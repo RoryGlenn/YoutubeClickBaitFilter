@@ -10,13 +10,16 @@
   ],
 
   "host_permissions": [
-    "*://www.youtube.com/*"
+    "*://www.youtube.com/*",
+    "https://cdn.jsdelivr.net/*",
+    "https://huggingface.co/*"
   ],
 
   "content_scripts": [
     {
       "matches": ["*://www.youtube.com/*"],
-      "js": ["filter.js"],
+      "js": ["dist/filter.bundle.js"],
+      "type": "module",
       "run_at": "document_idle"
     }
   ],
