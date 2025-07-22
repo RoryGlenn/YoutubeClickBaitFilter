@@ -1,9 +1,5 @@
 // filter.js
 
-import {
-    pipeline
-} from '@xenova/transformers';
-
 let blockedCount = 0;
 
 let userSettings = {
@@ -15,7 +11,7 @@ let userSettings = {
 };
 
 // --- model files hosted on jsDelivr CDN
-const MODEL_BASE = 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.4.0/dist/models/ilsilfverskiold/classify-clickbait-titles/quantized';
+// const MODEL_BASE = 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.4.0/dist/models/ilsilfverskiold/classify-clickbait-titles/quantized';
 
 // --- 1) NEGATIVE keywords
 const NEGATIVE = [
@@ -57,18 +53,20 @@ const NEGATIVE = [
 
 // --- 2) CLICKBAIT phrases (for reference; we use regex + ML)
 const CLICKBAIT = [
-    'are secretly ',
-    'about to crack',
+    '...',
+    '100% effective',
+    '100% guaranteed',
+    '100% risk free',
+    '99% of people',
     'a big secret',
-    'than i thought',
+    'about to crack',
     'about to explode',
-    'after this happened',
-    'why are all',
     'about to get',
-    'getting worse',
     'act fast',
     'act now',
+    'after this happened',
     'are ruining the',
+    'are secretly ',
     'become impossible',
     'before and after',
     "before it's too late",
@@ -77,10 +75,13 @@ const CLICKBAIT = [
     'breaking news',
     'caught in the act',
     'caught on camera',
+    'cheat code',
     'confession',
     'debunked',
+    'did you know ',
     'disturbing reality',
     "don't let this happen",
+    "don't want you to",
     'dont let this happen',
     'epic fail',
     'exclusive footage',
@@ -88,7 +89,9 @@ const CLICKBAIT = [
     'fails compilation',
     'final warning',
     'financial crisis',
+    'for the first time',
     'game changer',
+    'getting worse',
     'going to crack',
     'gone viral',
     'gone wrong',
@@ -96,133 +99,132 @@ const CLICKBAIT = [
     'hack your',
     'hidden agenda',
     'hidden hack',
+    'hidden horrors of ',
     'hidden truth',
     'horrifying truth',
+    'how to get ahead of',
     'incredible secret',
-    'rethink everything',
-    'rethink your life',
     'jaw-dropping',
     'jaw-dropping secrets',
     'just dropped',
     'just leaked',
-    'life hack',
     'life changing',
-    'this is what',
-    'this is how',
-    'life-changing',
+    'life hack',
     'life or death situation',
-    'miracle hack',
+    'life-changing',
+    'live:',
+    'massive fail',
     'mind blowing',
     'mind-blowing',
     'mind-blowing hack',
     'mind-blowing secrets',
-    'massive fail',
+    'miracle hack',
     'must see',
-    'for the first time',
-    'of all time',
-    'you need to',
-    'hidden horrors of ',
     'must watch',
     'never before',
     'never before seen',
-    'no one is talking about',
     'no one has told you',
+    'no one is talking about',
     'no one talks about',
     'no one tells',
     'nobody tells you',
+    'of all time',
+    'of the year',
     'offer ends',
     'one simple trick',
     'one trick to',
+    'only 1% of people',
     'only way to',
+    'pov ',
+    'pov:',
     'prepare to be amazed',
     'read this before',
+    'rethink everything',
+    'rethink your life',
+    'ruining every',
+    'ruining everything',
+    'ruining your',
     'scientists hate him',
     'secret hack',
     'secret weapon',
     'secrets of',
     'shocked the world',
     'shocking discovery',
-    "you'll ever need",
-    'did you know ',
     'shocking reveal',
     'shocking revelation',
     'shocking truth',
     'simple trick',
     'snake oil',
     'starting to crack',
-    'time bomb',
-    'today only',
-    'transformation',
-    'things i wish i knew before',
-    'this will change everything',
-    'things you need to',
-    "things you don't know",
-    'will make you',
-    'ruining everything',
-    'ruining every',
-    'ruining your',
+    'than i thought',
     'the one thing',
-    'pov:',
-    'pov ',
-    'live:',
-    'the reason why',
     'the real reason',
-    'why you should ',
+    'the reason why',
     'the truth about',
     'they lied to us',
     'they lied to you',
+    'things i wish i knew before',
+    "things you don't know",
+    'things you need to',
+    'this is how',
+    'this is what',
+    'this will change everything',
+    'time bomb',
+    'today only',
+    'transformation',
     'ultimate guide',
     'ultimate secret',
     'underestimated',
     'unseen footage',
     'viral sensation',
     'ways to',
-    'of the year',
     'what happens next',
     'what nobody tells you',
     "what they don't want you to know",
-    "don't want you to",
+    'why are all',
+    'why you should ',
+    'will make you',
+    'you are missing out',
     'you have to see this',
+    'you need to',
     "you won't believe",
     'you wont believe',
+    "you'll ever need",
     "you're missing out",
-    'you are missing out',
-    'how to get ahead of',
-    'only 1% of people',
-    '99% of people',
-    '100% guaranteed',
-    '100% risk free',
-    '100% effective',
-    'cheat code',
-    '...'
+    "is this the end",
+    "no one wants to",
+    "everyone wants to",
+    "will shock you",
+
 ];
 
+
 // --- 3) CLICKBAIT MODEL SETUP with explicit URLs
-let clickbaitClassifier = null;
-async function initClickbaitModel() {
-    if (clickbaitClassifier) return clickbaitClassifier;
-    clickbaitClassifier = await pipeline(
-        'text-classification',
-        MODEL_BASE, {
-            quantized: true,
-            max_length: 128,
-            configUrl: `${MODEL_BASE}/config.json`,
-            modelUrl: `${MODEL_BASE}/model.onnx`,
-            tokenizerUrl: `${MODEL_BASE}/tokenizer.json`
-        }
-    );
-    console.log('[Clickbait] Model loaded ✔', clickbaitClassifier);
-    return clickbaitClassifier;
-}
+// let clickbaitClassifier = null;
+// async function initClickbaitModel() {
+//     if (clickbaitClassifier) return clickbaitClassifier;
+//     clickbaitClassifier = await pipeline(
+//         'text-classification',
+//         MODEL_BASE, {
+//             quantized: true,
+//             max_length: 128,
+//             configUrl: `${MODEL_BASE}/config.json`,
+//             modelUrl: `${MODEL_BASE}/model.onnx`,
+//             tokenizerUrl: `${MODEL_BASE}/tokenizer.json`
+//         }
+//     );
+//     console.log('[Clickbait] Model loaded ✔', clickbaitClassifier);
+//     return clickbaitClassifier;
+// }
 
 // --- 4) Quick regex prefilter for obvious cases
-const quickClickbaitRegex = /\b(you wont believe|you won't believe|secret hack|\.{2,}|this is what)\b/i;
+// const quickClickbaitRegex = /\b(you wont believe|you won't believe|secret hack|\.{2,}|this is what)\b/i;
 
 (() => {
     // 5) LOAD SETTINGS & PRELOAD MODEL IF NEEDED
     chrome.storage.sync.get(userSettings, stored => {
         userSettings = stored;
-        if (userSettings.filterClickbait) initClickbaitModel();
+        // if (userSettings.filterClickbait) initClickbaitModel();
         runFilter();
         new MutationObserver(runFilter).observe(document.body, {
             childList: true,
@@ -235,53 +237,51 @@ const quickClickbaitRegex = /\b(you wont believe|you won't believe|secret hack|\
         const cards = document.querySelectorAll(
             'ytd-video-renderer, ytd-rich-item-renderer, ytd-grid-video-renderer'
         );
-        const model = userSettings.filterClickbait ?
-            await initClickbaitModel() :
-            null;
+        // const model = userSettings.filterClickbait ?
+        //     await initClickbaitModel() :
+        //     null;
 
         for (const card of cards) {
             const titleElem = card.querySelector('#video-title');
             const title = titleElem?.textContent.trim() || '';
 
-            // BAD / UPPERCASE / PUNCTUATION filters
             if (userSettings.filterBad && isBad(title)) {
                 card.remove();
                 blockedCount++;
-                continue;
-            }
-            if (userSettings.filterUppercase && hasThreeUpperCaseWords(title)) {
+            } else if (userSettings.filterUppercase && hasThreeUpperCaseWords(title)) {
                 card.remove();
                 blockedCount++;
-                continue;
-            }
-            if (userSettings.filterPunctuation && hasThreeOrMoreMarks(title)) {
+
+            } else if (userSettings.filterPunctuation && hasThreeOrMoreMarks(title)) {
                 card.remove();
                 blockedCount++;
-                continue;
+
+            } else if (userSettings.filterBad && isClickbait(title)) {
+                card.remove();
+                blockedCount++;
             }
 
             // CLICKBAIT quick regex
-            if (userSettings.filterClickbait && quickClickbaitRegex.test(title)) {
-                card.remove();
-                blockedCount++;
-                continue;
-            }
-
+            // if (userSettings.filterClickbait && quickClickbaitRegex.test(title)) {
+            //     card.remove();
+            //     blockedCount++;
+            //     continue;
+            // }
 
             // CLICKBAIT ML fallback
-            if (userSettings.filterClickbait && model) {
-                try {
-                    const [{label, score}] = await model(title);
-                    if (label === 'CLICKBAIT' && score > 0.75) {
-                        card.remove();
-                        blockedCount++;
-                        console.log('[Clickbait] Removed:', title);
-                        continue;
-                    }
-                } catch (e) {
-                    console.warn('Clickbait model error:', e);
-                }
-            }
+            // if (userSettings.filterClickbait && model) {
+            //     try {
+            //         const [{label, score}] = await model(title);
+            //         if (label === 'CLICKBAIT' && score > 0.75) {
+            //             card.remove();
+            //             blockedCount++;
+            //             console.log('[Clickbait] Removed:', title);
+            //             continue;
+            //         }
+            //     } catch (e) {
+            //         console.warn('Clickbait model error:', e);
+            //     }
+            // }
         }
     }
 
@@ -293,7 +293,8 @@ const quickClickbaitRegex = /\b(you wont believe|you won't believe|secret hack|\
                 (userSettings.filterBad && isBad(label)) ||
                 (userSettings.filterUppercase && hasThreeUpperCaseWords(label)) ||
                 (userSettings.filterPunctuation && hasThreeOrMoreMarks(label)) ||
-                (userSettings.filterClickbait && quickClickbaitRegex.test(label))
+                // (userSettings.filterClickbait && quickClickbaitRegex.test(label))
+                (userSettings.filterClickbait && isClickbait(label))
             ) {
                 const wrapper = el.closest('div.ytGridShelfViewModelGridShelfItem');
                 if (wrapper) {
@@ -306,7 +307,9 @@ const quickClickbaitRegex = /\b(you wont believe|you won't believe|secret hack|\
 
     // 8) RUN ALL FILTERS
     async function runFilter() {
-        if (!userSettings.enabled) return;
+        if (!userSettings.enabled) {
+            return;
+        }
         await hideStandard();
         removeByAriaRecursive();
         console.log('runFilter - blockedCount:', blockedCount);
@@ -316,8 +319,11 @@ const quickClickbaitRegex = /\b(you wont believe|you won't believe|secret hack|\
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.type === 'updateSettings') {
             userSettings = message.settings;
-            if (userSettings.enabled) runFilter();
-            else window.location.reload();
+            if (userSettings.enabled) {
+                runFilter();
+            } else {
+                window.location.reload();
+            }
             sendResponse({
                 ok: true
             });
@@ -333,6 +339,10 @@ const quickClickbaitRegex = /\b(you wont believe|you won't believe|secret hack|\
     // 10) HELPER FUNCTIONS
     function isBad(text) {
         return NEGATIVE.some(word => text.toLowerCase().includes(word));
+    }
+
+    function isClickbait(text) {
+        return CLICKBAIT.some(word => text.toLowerCase().includes(word));
     }
 
     function hasThreeUpperCaseWords(text) {
