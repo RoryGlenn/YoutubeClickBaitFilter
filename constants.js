@@ -10,10 +10,16 @@
  */
 export const NEGATIVE = [
     'anarchy','breakdown','calamity','cataclysm','catastrophe','chaos',
-    'collapse','contagion','crash','crisis','debacle','disaster','emergency',
+    'collapse','contagion','crash','crisis', 'crises','debacle','disaster','emergency',
     'epidemic','exclusive','exposed','frenzy','hacks','havoc','mayhem',
     'meltdown','outbreak','pandemic','panic','plague','revealed','secrets',
-    'shocking','turmoil','unbelievable','upheaval','uproar','urgent','warning'
+    'shocking','turmoil','unbelievable','upheaval','uproar','urgent','warning',
+    'bloodbath','bombshell','carnage','catastrophic','chaotic','conflict',
+    'devastating','disastrous','explosive','frantic','frightening',
+    'horrific','intense','nightmarish','perilous','scandalous',
+    'terrifying','threatening','tragic','unsettling','unthinkable',
+    'unprecedented','volatile','worrisome','alarming','disturbing',
+    'horrifying','menacing','ominous',
 ];
 
 /**
