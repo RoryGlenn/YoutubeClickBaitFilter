@@ -40,10 +40,15 @@ const filterRules = [
  */
 function loadSettings() {
     return new Promise(resolve => {
-        chrome.storage.sync.get(userSettings, stored => {
-            userSettings = stored;
-            resolve();
-        });
+        try {
+            chrome.storage.sync.get(userSettings, stored => {
+                userSettings = stored;
+                resolve();
+            });
+        } catch (error) {
+            console.error('Failed to load settings:', error);
+            resolve(); // Resolve anyway to continue with defaults
+        }
     });
 }
 
@@ -110,14 +115,19 @@ function setupObserver() {
  */
 function registerMessageHandlers() {
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message.type === 'updateSettings') {
-            userSettings = message.settings;
-            if (userSettings.enabled) runFilter();
-            else window.location.reload();
-            sendResponse({ ok: true });
-        }
-        if (message.type === 'getBlockedCount') {
-            sendResponse({ blockedCount });
+        try {
+            if (message.type === 'updateSettings') {
+                userSettings = message.settings;
+                if (userSettings.enabled) runFilter();
+                else window.location.reload();
+                sendResponse({ ok: true });
+            }
+            if (message.type === 'getBlockedCount') {
+                sendResponse({ blockedCount });
+            }
+        } catch (error) {
+            console.error('Error handling message:', error);
+            sendResponse({ error: error.message });
         }
     });
 }
