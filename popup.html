@@ -35,7 +35,7 @@
         .count {
             margin-bottom: 12px;
             text-align: center;
-            color: #4CAF50;
+            color: #ff6b35;
             font-weight: 500;
         }
         .setting {
@@ -45,7 +45,7 @@
         }
         .setting input[type="checkbox"] {
             margin-right: 8px;
-            accent-color: #4CAF50;
+            accent-color: #ff6b35;
             width: 16px;
             height: 16px;
         }
@@ -69,7 +69,7 @@
         }
         /* Custom checkbox styling for better dark theme integration */
         .setting input[type="checkbox"]:checked {
-            background-color: #4CAF50;
+            background-color: #ff6b35;
         }
     </style>
 </head>
@@ -80,27 +80,27 @@
         
         <div class="setting main-toggle">
             <input type="checkbox" id="filter-enabled">
-            <label for="filter-enabled">Enable Filter</label>
+            <label for="filter-enabled" title="Enable or disable the entire YouTube clickbait filter">Enable Filter</label>
         </div>
         
         <div class="setting">
             <input type="checkbox" id="filter-bad">
-            <label for="filter-bad">Crisis Keywords</label>
+            <label for="filter-bad" title="Filter videos with crisis keywords like 'BREAKING', 'URGENT'">Crisis Keywords</label>
         </div>
         
         <div class="setting">
             <input type="checkbox" id="filter-clickbait">
-            <label for="filter-clickbait">Clickbait Phrases</label>
+            <label for="filter-clickbait" title="Filter videos with clickbait phrases like 'You Won't Believe'">Clickbait Phrases</label>
         </div>
         
         <div class="setting">
             <input type="checkbox" id="filter-uppercase">
-            <label for="filter-uppercase">Excessive CAPS</label>
+            <label for="filter-uppercase" title="Filter videos with excessive uppercase text (50%+ capitals)">Excessive CAPS</label>
         </div>
         
         <div class="setting">
             <input type="checkbox" id="filter-punctuation">
-            <label for="filter-punctuation">Excessive !!! or ???</label>
+            <label for="filter-punctuation" title="Filter videos with 3+ exclamation/question marks in a row">Excessive !!! or ???</label>
         </div>
     </div>
     
