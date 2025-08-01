@@ -1,8 +1,9 @@
 // filter.js
 
-import { NEGATIVE, CLICKBAIT } from './constants.js';
+import {NEGATIVE, CLICKBAIT} from './constants.js';
 
 let blockedCount = 0;
+let currentUrl = window.location.href;
 let userSettings = {
     enabled: true,
     filterBad: true,
@@ -53,12 +54,50 @@ function loadSettings() {
 }
 
 /**
+ * Update the extension badge with current blocked count
+ */
+function updateBadge() {
+    // Add a small delay to ensure background script is ready
+    setTimeout(() => {
+        try {
+            chrome.runtime.sendMessage({
+                type: 'updateBadge',
+                count: blockedCount
+            }, (response) => {
+                // Handle the response or connection errors
+                if (chrome.runtime.lastError) {
+                    // Silently ignore connection errors - background script might not be ready
+                    // Don't log this as it can spam the console during startup
+                    return;
+                }
+            });
+        } catch (error) {
+            // Silently ignore errors during startup
+            return;
+        }
+    }, 100);
+}
+
+/**
+ * Check if the URL has changed and reset counter if it has
+ */
+function checkUrlChange() {
+    const newUrl = window.location.href;
+    if (newUrl !== currentUrl) {
+        console.log('URL changed from', currentUrl, 'to', newUrl, '- resetting counter');
+        currentUrl = newUrl;
+        blockedCount = 0;
+        updateBadge(); // Update badge when counter resets
+    }
+}
+
+/**
  * Determines whether a given text should be filtered out.
  * @param {string} text The title or label to test.
  * @returns {boolean} True if any enabled rule matches the text.
  */
 function shouldFilter(text) {
-    return filterRules.some(({ flag, test }) => userSettings[flag] && test(text));
+    return filterRules.some(({flag, test}) => userSettings[flag] && test(text));
 }
 
 /**
@@ -95,9 +134,20 @@ function filterAriaLabels() {
  */
 function runFilter() {
     if (!userSettings.enabled) return;
+    
+    // Check if URL has changed and reset counter if needed
+    checkUrlChange();
+    
+    const previousCount = blockedCount;
     filterStandardCards();
     filterAriaLabels();
-    console.log('runFilter - blockedCount:', blockedCount);
+    
+    // Only update badge if count changed
+    if (blockedCount !== previousCount) {
+        updateBadge();
+    }
+    
+    console.log('runFilter - blockedCount for current page:', blockedCount);
 }
 
 /**
@@ -120,15 +170,32 @@ function registerMessageHandlers() {
                 userSettings = message.settings;
                 if (userSettings.enabled) runFilter();
                 else window.location.reload();
-                sendResponse({ ok: true });
+                sendResponse({ok: true});
             }
             if (message.type === 'getBlockedCount') {
-                sendResponse({ blockedCount });
+                sendResponse({blockedCount});
             }
         } catch (error) {
             console.error('Error handling message:', error);
-            sendResponse({ error: error.message });
+            sendResponse({error: error.message});
         }
+    });
+}
+
+/**
+ * Setup listeners for page visibility changes to handle refreshes
+ */
+function setupPageListeners() {
+    // Listen for page visibility changes (handles refreshes and tab switches)
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            checkUrlChange();
+        }
+    });
+    
+    // Listen for popstate events (back/forward navigation)
+    window.addEventListener('popstate', () => {
+        checkUrlChange();
     });
 }
 
@@ -161,8 +228,10 @@ function hasThreeOrMoreMarks(title) {
 
 // Initialization sequence
 (async function init() {
+    console.log('YouTube ClickBait Filter initialized for page:', currentUrl);
     await loadSettings();
     runFilter();
     setupObserver();
+    setupPageListeners();
     registerMessageHandlers();
 })();

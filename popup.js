@@ -5,17 +5,24 @@
  */
 function updateBlockedCount() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            { type: 'getBlockedCount' },
-            (response) => {
-                const el = document.getElementById('blocked-count');
-                el.textContent =
-                    response && typeof response.blockedCount === 'number'
-                        ? response.blockedCount
-                        : 'N/A';
-            }
-        );
+        if (tabs[0]) {
+            chrome.tabs.sendMessage(
+                tabs[0].id,
+                { type: 'getBlockedCount' },
+                (response) => {
+                    const el = document.getElementById('blocked-count');
+                    if (chrome.runtime.lastError) {
+                        // Content script might not be ready yet
+                        el.textContent = 'N/A';
+                        return;
+                    }
+                    el.textContent =
+                        response && typeof response.blockedCount === 'number'
+                            ? response.blockedCount
+                            : 'N/A';
+                }
+            );
+        }
     });
 }
 
@@ -57,14 +64,20 @@ function saveSettings() {
     // Persist settings, then message the content-script and refresh count
     chrome.storage.sync.set(settings, () => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            chrome.tabs.sendMessage(
-                tabs[0].id,
-                { type: 'updateSettings', settings },
-                () => {
-                    // After settings applied, update the count display
-                    updateBlockedCount();
-                }
-            );
+            if (tabs[0]) {
+                chrome.tabs.sendMessage(
+                    tabs[0].id,
+                    { type: 'updateSettings', settings },
+                    () => {
+                        if (chrome.runtime.lastError) {
+                            // Content script might not be ready, ignore error
+                            return;
+                        }
+                        // After settings applied, update the count display
+                        updateBlockedCount();
+                    }
+                );
+            }
         });
     });
 }
