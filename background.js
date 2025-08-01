@@ -14,15 +14,33 @@ async function updateBadge(count, tabId) {
             return;
         }
         
-        // Set the badge text
+        // Set the badge text with better formatting
         await chrome.action.setBadgeText({
-            text: count > 0 ? count.toString() : '',
+            text: count > 0 ? (count > 99 ? '99+' : count.toString()) : '',
             tabId: tabId
         });
         
-        // Set badge background color (red for blocked content)
+        // Set badge background color and styling for maximum visibility
         await chrome.action.setBadgeBackgroundColor({
-            color: '#FF4444',
+            color: count > 10 ? '#FF0000' : '#FF6600', // Red for high counts, orange for lower
+            tabId: tabId
+        });
+        
+        // Optional: Set badge text color (Chrome 110+)
+        try {
+            await chrome.action.setBadgeTextColor({
+                color: '#FFFFFF', // White text for contrast
+                tabId: tabId
+            });
+        } catch (error) {
+            // Ignore if setBadgeTextColor is not supported
+        }
+        
+        // Update tooltip with more detailed info
+        await chrome.action.setTitle({
+            title: count > 0 
+                ? `YouTube ClickBait Filter - ${count} videos blocked on this page`
+                : 'YouTube ClickBait Filter - No videos blocked',
             tabId: tabId
         });
     } catch (error) {

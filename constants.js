@@ -29,7 +29,7 @@ export const NEGATIVE = [
 export const CLICKBAIT = [
     '...','100% effective','100% guaranteed','100% risk free','99% of people',
     'a big secret','about to crack','about to explode','about to get','act fast',
-    'act now','after this happened','are ruining the','are secretly ','become impossible',
+    'act now','after this happened', 'all hell breaks loose', 'are ruining the','are secretly ','become impossible',
     'before and after',"before it's too late",'blows your mind','boost your',
     'breaking news','caught in the act','caught on camera','cheat code','confession',
     'debunked','did you know ','disturbing reality',"don't let this happen",
@@ -53,7 +53,7 @@ export const CLICKBAIT = [
     'snake oil','starting to crack','than i thought','the one thing','the real reason',
     'the reason why','the truth about','they lied to us','they lied to you',
     'things i wish i knew before',"things you don't know",'things you need to',
-    'this is how','this is what','this will change everything','time bomb',
+    'this is how','this is what','change everything','time bomb',
     'today only','transformation','ultimate guide','ultimate secret','underestimated',
     'unseen footage','viral sensation','ways to','what happens next',
     'what nobody tells you',"what they don't want you to know",'will make you',
