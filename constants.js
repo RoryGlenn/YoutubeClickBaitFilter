@@ -8,7 +8,7 @@
  * Words indicating negative or alarming content.
  * @type {string[]}
  */
-export const NEGATIVE = [
+export const CLICKBAIT_WORDS = [
     'anarchy','breakdown','calamity','cataclysm','catastrophe','chaos',
     'collapse','contagion','crash','crisis', 'crises','debacle','disaster','emergency',
     'epidemic','exclusive','exposed','frenzy','hacks','havoc','mayhem',
@@ -26,7 +26,7 @@ export const NEGATIVE = [
  * Common clickbait phrases to identify sensational headlines.
  * @type {string[]}
  */
-export const CLICKBAIT = [
+export const CLICKBAIT_PHRASES = [
     '...','100% effective','100% guaranteed','100% risk free','99% of people',
     'a big secret','about to crack','about to explode','about to get','act fast',
     'act now','after this happened', 'all hell breaks loose', 'are ruining the','are secretly ','become impossible',

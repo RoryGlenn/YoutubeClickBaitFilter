@@ -42,15 +42,15 @@ function updateBlockedCount() {
 chrome.storage.sync.get(
     {
         enabled: true,
-        filterBad: true,
-        filterClickbait: true,
+        filterClickbaitWords: true,
+        filterClickbaitPhrases: true,
         filterUppercase: true,
         filterPunctuation: true,
     },
     (settings) => {
         document.getElementById('filter-enabled').checked = settings.enabled;
-        document.getElementById('filter-bad').checked = settings.filterBad;
-        document.getElementById('filter-clickbait').checked = settings.filterClickbait;
+        document.getElementById('filter-clickbait-words').checked = settings.filterClickbaitWords;
+        document.getElementById('filter-clickbait-phrases').checked = settings.filterClickbaitPhrases;
         document.getElementById('filter-uppercase').checked = settings.filterUppercase;
         document.getElementById('filter-punctuation').checked = settings.filterPunctuation;
 
@@ -70,8 +70,8 @@ chrome.storage.sync.get(
 function saveSettings() {
     const settings = {
         enabled: document.getElementById('filter-enabled').checked,
-        filterBad: document.getElementById('filter-bad').checked,
-        filterClickbait: document.getElementById('filter-clickbait').checked,
+        filterClickbaitWords: document.getElementById('filter-clickbait-words').checked,
+        filterClickbaitPhrases: document.getElementById('filter-clickbait-phrases').checked,
         filterUppercase: document.getElementById('filter-uppercase').checked,
         filterPunctuation: document.getElementById('filter-punctuation').checked,
     };

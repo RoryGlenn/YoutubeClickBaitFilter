@@ -1,13 +1,13 @@
 // filter.js
 
-import {NEGATIVE, CLICKBAIT} from './constants.js';
+import {CLICKBAIT_WORDS, CLICKBAIT_PHRASES} from './constants.js';
 
 let blockedCount = 0;
 let currentUrl = window.location.href;
 let userSettings = {
     enabled: true,
-    filterBad: true,
-    filterClickbait: true,
+    filterClickbaitWords: true,
+    filterClickbaitPhrases: true,
     filterUppercase: true,
     filterPunctuation: true
 };
@@ -18,8 +18,8 @@ let userSettings = {
  */
 const filterRules = [
     {
-        flag: 'filterBad',
-        test: text => NEGATIVE.some(w => text.toLowerCase().includes(w))
+        flag: 'filterClickbaitWords',
+        test: text => CLICKBAIT_WORDS.some(w => text.toLowerCase().includes(w))
     },
     {
         flag: 'filterUppercase',
@@ -30,8 +30,8 @@ const filterRules = [
         test: hasThreeOrMoreMarks
     },
     {
-        flag: 'filterClickbait',
-        test: text => CLICKBAIT.some(w => text.toLowerCase().includes(w))
+        flag: 'filterClickbaitPhrases',
+        test: text => CLICKBAIT_PHRASES.some(w => text.toLowerCase().includes(w))
     }
 ];
 
