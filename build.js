@@ -2,6 +2,15 @@
 const fs = require('fs');
 const path = require('path');
 
+/**
+ * Builds the Chrome extension by bundling the content script and copying necessary files.
+ * Creates the dist directory, bundles filter.js with esbuild, and copies background.js.
+ * 
+ * @async
+ * @function build
+ * @returns {Promise<void>} Resolves when build completes successfully
+ * @throws {Error} Exits process with code 1 if build fails
+ */
 async function build() {
     try {
         // Ensure dist directory exists

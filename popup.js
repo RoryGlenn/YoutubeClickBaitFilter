@@ -1,7 +1,12 @@
 // popup.js
 
 /**
- * Queries the current tab for its blocked count and updates the UI.
+ * Queries the current tab for its blocked count and updates the UI display.
+ * Sends a message to the content script to get the current blocked video count
+ * and updates the popup display with the result.
+ * 
+ * @function updateBlockedCount
+ * @returns {void}
  */
 function updateBlockedCount() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -27,7 +32,12 @@ function updateBlockedCount() {
 }
 
 /**
- * Load saved settings from chrome.storage and initialize the controls.
+ * Loads saved settings from chrome.storage.sync and initializes the popup UI controls.
+ * Sets the checkbox states based on stored user preferences and displays the initial blocked count.
+ * This function is executed immediately when the popup loads.
+ * 
+ * @function initializePopup
+ * @returns {void}
  */
 chrome.storage.sync.get(
     {
@@ -50,7 +60,12 @@ chrome.storage.sync.get(
 );
 
 /**
- * Read the current checkbox states and persist them, then notify the content-script.
+ * Reads the current checkbox states, persists them to chrome.storage.sync,
+ * and notifies the content script to apply the updated settings.
+ * Also refreshes the blocked count display after settings are applied.
+ * 
+ * @function saveSettings
+ * @returns {void}
  */
 function saveSettings() {
     const settings = {
