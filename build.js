@@ -28,8 +28,37 @@ async function build() {
             outfile: 'dist/filter.bundle.js',
         });
 
-        // Copy background.js to dist (doesn't need bundling)
-        fs.copyFileSync('background.js', 'dist/background.js');
+        // Copy essential files
+        const filesToCopy = [
+            'manifest.json',
+            'background.js',
+            'popup.html',
+            'popup.js',
+        ];
+
+        filesToCopy.forEach(file => {
+            if (fs.existsSync(file)) {
+                fs.copyFileSync(file, `dist/${file}`);
+                console.log(`Copied: ${file}`);
+            } else {
+                console.warn(`Warning: ${file} not found`);
+            }
+        });
+
+        // Copy icons directory
+        if (fs.existsSync('icons')) {
+            if (!fs.existsSync('dist/icons')) {
+                fs.mkdirSync('dist/icons');
+            }
+
+            const iconFiles = fs.readdirSync('icons');
+            iconFiles.forEach(iconFile => {
+                fs.copyFileSync(`icons/${iconFile}`, `dist/icons/${iconFile}`);
+                console.log(`Copied icon: ${iconFile}`);
+            });
+        } else {
+            console.warn('Warning: icons directory not found');
+        }
         
         console.log('Build completed successfully!');
     } catch (error) {
