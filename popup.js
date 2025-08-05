@@ -105,10 +105,7 @@ function saveSettings() {
     'uppercase',
     'punctuation',
 ].forEach((key) => {
-    const element = document.getElementById(`filter-${key}`);
-    if (element) {
-        element.addEventListener('change', saveSettings);
-    } else {
-        console.error(`Element with ID filter-${key} not found`);
-    }
+    document
+        .getElementById(`filter-${key}`)
+        .addEventListener('change', saveSettings);
 });
