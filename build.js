@@ -1,6 +1,7 @@
 // build.js
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import esbuild from 'esbuild';
 
 /**
  * Builds the Chrome extension by bundling the content script and copying necessary files.
@@ -19,7 +20,7 @@ async function build() {
         }
 
         // Bundle the content script
-        await require('esbuild').build({
+        await esbuild.build({
             entryPoints: ['filter.js'],
             bundle: true,
             minify: true,
