@@ -100,12 +100,15 @@ function saveSettings() {
 // Wire up all checkbox changes to saveSettings()
 [
     'enabled',
-    'bad',
-    'clickbait',
+    'clickbait-words',
+    'clickbait-phrases',
     'uppercase',
     'punctuation',
 ].forEach((key) => {
-    document
-        .getElementById(`filter-${key}`)
-        .addEventListener('change', saveSettings);
+    const element = document.getElementById(`filter-${key}`);
+    if (element) {
+        element.addEventListener('change', saveSettings);
+    } else {
+        console.error(`Element with ID filter-${key} not found`);
+    }
 });
