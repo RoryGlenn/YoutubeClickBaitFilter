@@ -47,8 +47,11 @@
             font-family: monospace;
             font-size: 12px;
             white-space: pre-wrap;
-            max-height: 400px;
+            max-height: 800px;
             overflow-y: auto;
+        }
+        .log.expanded {
+            max-height: none;
         }
         .test-area {
             border: 2px solid #e0e0e0;
@@ -129,6 +132,7 @@ Look for sidebar video containers like:
             <button onclick="clearResults()">🧹 Clear Results</button>
             <button onclick="showSampleHTML()">📝 Load Sample HTML</button>
             <button onclick="showComplexSampleHTML()">🔬 Load Complex Sample HTML</button>
+            <button onclick="toggleLogView()" id="logToggle" style="display:none;">📜 Show Full Log</button>
         </div>
         
         <div id="stats"></div>
@@ -139,6 +143,38 @@ Look for sidebar video containers like:
         </div>
     </div>
 
+    <script>
+        function toggleLogView() {
+            console.log('Toggle button clicked');
+            const logDiv = document.getElementById('log');
+            const logToggle = document.getElementById('logToggle');
+            
+            console.log('Log div:', logDiv);
+            console.log('Log toggle button:', logToggle);
+            console.log('Current classes:', logDiv.className);
+            
+            if (logDiv.classList.contains('expanded')) {
+                logDiv.classList.remove('expanded');
+                logToggle.textContent = '📜 Show Full Log';
+                console.log('Collapsed log');
+            } else {
+                logDiv.classList.add('expanded');
+                logToggle.textContent = '📝 Collapse Log';
+                console.log('Expanded log');
+            }
+        }
+        
+        // Show the toggle button when there's log content
+        function showLogToggle() {
+            console.log('Showing log toggle button');
+            const toggleBtn = document.getElementById('logToggle');
+            toggleBtn.style.display = 'inline-block';
+            console.log('Toggle button display:', toggleBtn.style.display);
+        }
+        
+        // Make it available globally
+        window.showLogToggle = showLogToggle;
+    </script>
     <script type="module" src="test-logic.js"></script>
 </body>
 </html>

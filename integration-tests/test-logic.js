@@ -54,6 +54,7 @@ function log(message) {
 }
 
 function testFiltering() {
+    console.log('=== TEST FILTERING STARTED ===');
     const htmlInput = document.getElementById('htmlInput');
     const testArea = document.getElementById('testArea');
     const testContent = document.getElementById('testContent');
@@ -137,10 +138,12 @@ function testFiltering() {
         }
     } else {
         // Process each container with standard logic
+        log(`Processing ${allContainers.length} containers...`);
+        
         allContainers.forEach((container, index) => {
-            log(`\n--- Processing Container ${index + 1} (${container.tagName || container.className}) ---`);
-            
             try {
+                log(`\n--- Processing Container ${index + 1} (${container.tagName || container.className}) ---`);
+                
                 // Try multiple selectors to find the title (both legacy and new)
                 const titleSelectors = [
                     // Legacy selectors
@@ -212,8 +215,12 @@ function testFiltering() {
 
             } catch (error) {
                 log(`  ❌ Error processing container: ${error.message}`);
+                console.error('Container processing error:', error);
             }
         });
+        
+        log(`Completed processing all ${allContainers.length} containers`);
+        console.log('=== CONTAINER PROCESSING COMPLETE ===');
     }
 
     log(`\n=== Test Complete ===`);
@@ -223,7 +230,21 @@ function testFiltering() {
     log(`  - Total processed: ${filteredCount + keptCount}`);
 
     // Update UI
-    logDiv.innerHTML = `<div class="log">${logOutput}</div>`;
+    console.log('Updating UI with log output length:', logOutput.length);
+    console.log('Log div element:', logDiv);
+    
+    logDiv.className = 'log';
+    logDiv.innerHTML = logOutput;
+    
+    console.log('Log div after update:', logDiv.innerHTML.length, 'characters');
+    
+    // Show the log toggle button if there's content
+    if (window.showLogToggle) {
+        console.log('Calling showLogToggle');
+        window.showLogToggle();
+    } else {
+        console.log('showLogToggle not available');
+    }
     
     statsDiv.innerHTML = `
         <div class="stats">
@@ -239,8 +260,11 @@ function testFiltering() {
 
 function clearResults() {
     document.getElementById('testArea').style.display = 'none';
-    document.getElementById('log').innerHTML = '';
+    const logDiv = document.getElementById('log');
+    logDiv.innerHTML = '';
+    logDiv.className = '';
     document.getElementById('stats').innerHTML = '';
+    document.getElementById('logToggle').style.display = 'none';
     logOutput = '';
     filteredCount = 0;
     keptCount = 0;
