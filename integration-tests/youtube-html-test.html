@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YouTube Real HTML Structure Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f9f9f9;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            font-family: monospace;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            resize: vertical;
+        }
+        button {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px 5px 10px 0;
+        }
+        button:hover {
+            background: #3367d6;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .test-area {
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .filtered-video {
+            border: 3px solid #f44336 !important;
+            background: #ffebee !important;
+            opacity: 0.7;
+            position: relative;
+        }
+        .kept-video {
+            border: 3px solid #4caf50 !important;
+            background: #e8f5e8 !important;
+        }
+        .filter-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 11px;
+            z-index: 1000;
+        }
+        .filter-badge.filtered {
+            background: #f44336;
+            color: white;
+        }
+        .filter-badge.kept {
+            background: #4caf50;
+            color: white;
+        }
+        .stats {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .instructions {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #ff9800;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Real HTML Structure Test</h1>
+        
+        <div class="instructions">
+            <h3>📋 How to Use This Test:</h3>
+            <ol>
+                <li><strong>Go to YouTube</strong> and navigate to a video page with sidebar videos</li>
+                <li><strong>Right-click</strong> on the page and select "View Page Source" (or press Ctrl+U / Cmd+U)</li>
+                <li><strong>Copy the HTML</strong> - you can copy the entire page source or just sections containing sidebar videos</li>
+                <li><strong>Paste it</strong> in the textarea below</li>
+                <li><strong>Click "Test Filtering"</strong> to see which videos would be filtered</li>
+            </ol>
+            <p><strong>💡 Pro tip:</strong> Look for sections with <code>yt-lockup-view-model</code> or <code>ytd-compact-video-renderer</code> for best results!</p>
+        </div>
+        
+        <div class="container">
+            <h2>Paste YouTube HTML</h2>
+            <textarea id="htmlInput" placeholder="Paste YouTube page HTML here...
+
+This test helps debug filtering against real YouTube structure.
+Look for sidebar video containers like:
+- yt-lockup-view-model (new structure)
+- ytd-compact-video-renderer (legacy structure)"></textarea>
+            
+            <button onclick="testFiltering()">🔍 Test Filtering</button>
+            <button onclick="clearResults()">🧹 Clear Results</button>
+            <button onclick="showSampleHTML()">📝 Load Sample HTML</button>
+        </div>
+        
+        <div id="stats"></div>
+        <div id="log"></div>
+        <div id="testArea" class="test-area" style="display: none;">
+            <h3>Test Results:</h3>
+            <div id="testContent"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import our actual constants and filtering logic from the shared modules
+        import { CLICKBAIT_PHRASES, CLICKBAIT_WORDS } from './constants.js';
+        import { filterRules, hasThreeUpperCaseWords, hasThreeOrMoreMarks, shouldFilter as shouldFilterPure } from './filtering-logic.js';
+
+        // Create userSettings for testing (same defaults as extension)
+        const userSettings = {
+            enabled: true,
+            filterClickbaitWords: true,
+            filterClickbaitPhrases: true,
+            filterUppercase: true,
+            filterPunctuation: true
+        };
+
+        // Wrapper for shouldFilter that uses our test userSettings
+        function shouldFilter(text) {
+            return shouldFilterPure(text, userSettings);
+        }
+
+        // Now using the shared userSettings object from filter.js
+        // This ensures shouldFilter() uses the same settings as our test
+
+        // Test-specific wrapper that provides detailed logging while using the real shouldFilter logic
+        function shouldFilterWithLogging(text) {
+            if (!text || typeof text !== 'string') return false;
+            
+            // Use the real shouldFilter function first
+            const willFilter = shouldFilter(text);
+            
+            if (willFilter) {
+                // If it will be filtered, figure out why by checking each rule manually
+                filterRules.forEach(({flag, test}) => {
+                    if (userSettings[flag] && test(text)) {
+                        // Provide specific match details
+                        if (flag === 'filterClickbaitWords') {
+                            const matchedWords = CLICKBAIT_WORDS.filter(w => text.toLowerCase().includes(w));
+                            log(`  ✓ Matched clickbait word(s): "${matchedWords.join('", "')}"`);
+                        } else if (flag === 'filterClickbaitPhrases') {
+                            const matchedPhrases = CLICKBAIT_PHRASES.filter(p => text.toLowerCase().includes(p.toLowerCase()));
+                            log(`  ✓ Matched clickbait phrase(s): "${matchedPhrases.join('", "')}"`);
+                        } else if (flag === 'filterUppercase') {
+                            log(`  ✓ Excessive uppercase detected`);
+                        } else if (flag === 'filterPunctuation') {
+                            log(`  ✓ Excessive punctuation detected`);
+                        }
+                    }
+                });
+            }
+            
+            return willFilter;
+        }
+
+        let filteredCount = 0;
+        let keptCount = 0;
+        let logOutput = '';
+
+        function log(message) {
+            logOutput += message + '\n';
+            console.log(message);
+        }
+
+        function testFiltering() {
+            const htmlInput = document.getElementById('htmlInput');
+            const testArea = document.getElementById('testArea');
+            const testContent = document.getElementById('testContent');
+            const logDiv = document.getElementById('log');
+            const statsDiv = document.getElementById('stats');
+            
+            if (!htmlInput.value.trim()) {
+                alert('Please paste YouTube HTML first!');
+                return;
+            }
+
+            // Reset counters and logs
+            filteredCount = 0;
+            keptCount = 0;
+            logOutput = '';
+            
+            log('=== YouTube Real HTML Filtering Test Started ===');
+            log('Loading HTML content...');
+
+            // Load the HTML into test area
+            testContent.innerHTML = htmlInput.value;
+            testArea.style.display = 'block';
+
+            // Find all video containers (both legacy and new structure)
+            const videoSelectors = [
+                // Legacy YouTube selectors
+                'ytd-video-renderer',
+                'ytd-rich-item-renderer', 
+                'ytd-grid-video-renderer',
+                'ytd-compact-video-renderer',
+                'ytd-playlist-video-renderer',
+                'ytd-movie-renderer',
+                'ytd-radio-renderer',
+                // New 2025+ YouTube structure
+                'yt-lockup-view-model',
+                '[class*="yt-lockup-view-model"]'
+            ];
+
+            const allContainers = testContent.querySelectorAll(videoSelectors.join(', '));
+            log(`Found ${allContainers.length} video containers total`);
+
+            if (allContainers.length === 0) {
+                log('⚠️  No video containers found with standard selectors!');
+                log('Trying alternative detection...');
+                
+                // Try to find any elements that might contain video titles
+                const alternativeSelectors = [
+                    'a[href*="/watch"]',
+                    '[class*="lockup"]',
+                    '[class*="metadata"]',
+                    '#video-title', 
+                    '[id*="title"]',
+                    '[aria-label*="minutes"]',
+                    '[title]'
+                ];
+                
+                const possibleElements = testContent.querySelectorAll(alternativeSelectors.join(', '));
+                log(`Found ${possibleElements.length} possible video-related elements`);
+                
+                // Check a few of these elements for titles
+                let foundTitles = 0;
+                possibleElements.slice(0, 20).forEach((el, i) => {
+                    const text = el.textContent?.trim() || el.getAttribute('aria-label')?.trim() || el.getAttribute('title')?.trim() || '';
+                    if (text && text.length > 10 && text.length < 200) {
+                        foundTitles++;
+                        log(`  Possible title ${foundTitles}: "${text.substring(0, 60)}..."`);
+                        
+                        if (shouldFilterWithLogging(text)) {
+                            log(`    → Would be FILTERED`);
+                            filteredCount++;
+                        } else {
+                            log(`    → Would be KEPT`);
+                            keptCount++;
+                        }
+                    }
+                });
+                
+                if (foundTitles === 0) {
+                    log('❌ No video titles found in the HTML');
+                    log('Make sure you copied HTML from a YouTube page with sidebar videos');
+                }
+            } else {
+                // Process each container with standard logic
+                allContainers.forEach((container, index) => {
+                    log(`\n--- Processing Container ${index + 1} (${container.tagName || container.className}) ---`);
+                    
+                    try {
+                        // Try multiple selectors to find the title (both legacy and new)
+                        const titleSelectors = [
+                            // Legacy selectors
+                            '#video-title',
+                            'a#video-title',
+                            '.ytd-video-meta-block #video-title',
+                            'h3 a',
+                            '.title a',
+                            'a[aria-label]',
+                            '[role="heading"] a',
+                            'span[aria-label]',
+                            // New 2025+ selectors
+                            '.yt-lockup-metadata-view-model-wiz__title',
+                            'a.yt-lockup-metadata-view-model-wiz__title',
+                            '.yt-lockup-metadata-view-model-wiz__heading-reset a',
+                            'h3.yt-lockup-metadata-view-model-wiz__heading-reset a',
+                            '[class*="yt-lockup-metadata-view-model-wiz__title"]',
+                            '[class*="lockup"] a[href*="/watch"]',
+                            'a[href*="/watch"][aria-label]'
+                        ];
+
+                        let title = '';
+                        let titleElement = null;
+                        let usedSelector = '';
+
+                        // Try each selector
+                        for (const selector of titleSelectors) {
+                            titleElement = container.querySelector(selector);
+                            if (titleElement) {
+                                title = titleElement.textContent?.trim() || 
+                                       titleElement.getAttribute('aria-label')?.trim() ||
+                                       titleElement.getAttribute('title')?.trim() || '';
+                                if (title) {
+                                    usedSelector = selector;
+                                    log(`  Found title via selector "${selector}"`);
+                                    break;
+                                }
+                            }
+                        }
+
+                        // Fallback: try aria-label on container
+                        if (!title) {
+                            title = container.getAttribute('aria-label')?.trim() ||
+                                   container.getAttribute('title')?.trim() || '';
+                            if (title) {
+                                usedSelector = 'container attribute';
+                                log(`  Found title via container attribute`);
+                            }
+                        }
+
+                        if (title) {
+                            log(`  Title: "${title}"`);
+                            
+                            if (shouldFilterWithLogging(title)) {
+                                log(`  🚫 DECISION: FILTER this video`);
+                                container.classList.add('filtered-video');
+                                container.innerHTML = '<div class="filter-badge filtered">FILTERED</div>' + container.innerHTML;
+                                filteredCount++;
+                            } else {
+                                log(`  ✅ DECISION: KEEP this video`);
+                                container.classList.add('kept-video');
+                                container.innerHTML = '<div class="filter-badge kept">KEPT</div>' + container.innerHTML;
+                                keptCount++;
+                            }
+                        } else {
+                            log(`  ⚠️  No title found for this container`);
+                            log(`  Container HTML preview: ${container.innerHTML.substring(0, 200)}...`);
+                        }
+
+                    } catch (error) {
+                        log(`  ❌ Error processing container: ${error.message}`);
+                    }
+                });
+            }
+
+            log(`\n=== Test Complete ===`);
+            log(`📊 Results:`);
+            log(`  - Videos to filter: ${filteredCount}`);
+            log(`  - Videos to keep: ${keptCount}`);
+            log(`  - Total processed: ${filteredCount + keptCount}`);
+
+            // Update UI
+            logDiv.innerHTML = `<div class="log">${logOutput}</div>`;
+            
+            statsDiv.innerHTML = `
+                <div class="stats">
+                    <h3>📊 Test Results</h3>
+                    <p><strong>🚫 Videos to Filter:</strong> ${filteredCount}</p>
+                    <p><strong>✅ Videos to Keep:</strong> ${keptCount}</p>
+                    <p><strong>📋 Total Processed:</strong> ${filteredCount + keptCount}</p>
+                    <p><em>Scroll down to see visual results. Filtered videos have red borders, kept videos have green borders.</em></p>
+                    ${filteredCount + keptCount === 0 ? '<p><strong style="color: #f44336;">⚠️ No videos found! Make sure you pasted YouTube HTML with video content.</strong></p>' : ''}
+                </div>
+            `;
+        }
+
+        function clearResults() {
+            document.getElementById('testArea').style.display = 'none';
+            document.getElementById('log').innerHTML = '';
+            document.getElementById('stats').innerHTML = '';
+            logOutput = '';
+            filteredCount = 0;
+            keptCount = 0;
+        }
+
+        function showSampleHTML() {
+            document.getElementById('htmlInput').value = `
+<!-- Sample YouTube structures for testing -->
+<div>
+    <!-- New 2025+ YouTube Structure -->
+    <yt-lockup-view-model class="yt-lockup-view-model-wiz yt-lockup-view-model-wiz--vertical">
+        <div class="yt-lockup-view-model-wiz__metadata">
+            <div class="yt-lockup-metadata-view-model-wiz__text-container">
+                <h3 class="yt-lockup-metadata-view-model-wiz__heading-reset" title="Everyone is Quitting Big Tech">
+                    <a href="/watch?v=test1" class="yt-lockup-metadata-view-model-wiz__title" aria-label="Everyone is Quitting Big Tech. 14 minutes, 17 seconds">
+                        <span>Everyone is Quitting Big Tech</span>
+                    </a>
+                </h3>
+            </div>
+        </div>
+    </yt-lockup-view-model>
+
+    <!-- Legacy YouTube Structure -->
+    <ytd-compact-video-renderer>
+        <div>
+            <a id="video-title" href="/watch?v=test2">You WON'T BELIEVE What Happened Next!!!</a>
+            <div>Drama Channel • 500K views • 1 hour ago</div>
+        </div>
+    </ytd-compact-video-renderer>
+
+    <!-- Regular video (should not be filtered) -->
+    <yt-lockup-view-model class="yt-lockup-view-model-wiz">
+        <div class="yt-lockup-metadata-view-model-wiz__text-container">
+            <h3 class="yt-lockup-metadata-view-model-wiz__heading-reset">
+                <a href="/watch?v=test3" class="yt-lockup-metadata-view-model-wiz__title">
+                    How to Learn JavaScript - Complete Tutorial
+                </a>
+            </h3>
+        </div>
+    </yt-lockup-view-model>
+
+    <!-- Another clickbait video -->
+    <yt-lockup-view-model class="yt-lockup-view-model-wiz">
+        <div class="yt-lockup-metadata-view-model-wiz__text-container">
+            <h3 class="yt-lockup-metadata-view-model-wiz__heading-reset">
+                <a href="/watch?v=test4" class="yt-lockup-metadata-view-model-wiz__title">
+                    This Will SHOCK You About AI!!!
+                </a>
+            </h3>
+        </div>
+    </yt-lockup-view-model>
+
+    <!-- Test the specific video that was missed: "The entry level tech job crisis" -->
+    <yt-lockup-view-model class="yt-lockup-view-model-wiz">
+        <div class="yt-lockup-metadata-view-model-wiz__text-container">
+            <h3 class="yt-lockup-metadata-view-model-wiz__heading-reset">
+                <a href="/watch?v=test5" class="yt-lockup-metadata-view-model-wiz__title">
+                    The entry level tech job crisis
+                </a>
+            </h3>
+        </div>
+    </yt-lockup-view-model>
+</div>
+            `.trim();
+        }
+    </script>
+</body>
+</html>

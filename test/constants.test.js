@@ -11,7 +11,7 @@ describe('Constants Data Integrity Tests', () => {
     describe('Superset Detection', () => {
         test('CLICKBAIT_PHRASES should not contain phrases that are supersets of CLICKBAIT_WORDS', () => {
             const redundantPhrases = [];
-            
+
             // Check each phrase against each word
             CLICKBAIT_PHRASES.forEach(phrase => {
                 CLICKBAIT_WORDS.forEach(word => {
