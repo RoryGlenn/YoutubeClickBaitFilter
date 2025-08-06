@@ -16,7 +16,7 @@ let userSettings = {
  * Array of filter rules, mapping a userSettings flag to a test function.
  * @type {{flag: string, test: function(string): boolean}[]}
  */
-const filterRules = [
+export const filterRules = [
     {
         flag: 'filterClickbaitWords',
         test: text => CLICKBAIT_WORDS.some(w => text.toLowerCase().includes(w))
@@ -96,7 +96,7 @@ function checkUrlChange() {
  * @param {string} text The title or label to test.
  * @returns {boolean} True if any enabled rule matches the text.
  */
-function shouldFilter(text) {
+export function shouldFilter(text) {
     return filterRules.some(({flag, test}) => userSettings[flag] && test(text));
 }
 
@@ -470,7 +470,7 @@ function setupPageListeners() {
  * @param {string} text
  * @returns {boolean}
  */
-function hasThreeUpperCaseWords(text) {
+export function hasThreeUpperCaseWords(text) {
     const words = text.trim().split(/\s+/);
     let count = 0;
     for (const w of words) {
@@ -486,7 +486,7 @@ function hasThreeUpperCaseWords(text) {
  * @param {string} title
  * @returns {boolean}
  */
-function hasThreeOrMoreMarks(title) {
+export function hasThreeOrMoreMarks(title) {
     const exCount = (title.match(/!/g) || []).length;
     const qmCount = (title.match(/\?/g) || []).length;
     return exCount >= 3 || qmCount >= 3;
