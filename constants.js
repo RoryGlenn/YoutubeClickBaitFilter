@@ -9,6 +9,7 @@
  * @type {string[]}
  */
 export const CLICKBAIT_WORDS = [
+    "actually",
     "alarming",
     "anarchy",
     "bloodbath",
@@ -82,6 +83,7 @@ export const CLICKBAIT_WORDS = [
     "volatile",
     "warning",
     "worrisome",
+    "wtf",
 ]
 
 /**
@@ -268,6 +270,7 @@ export const CLICKBAIT_PHRASES =
     "snake oil",
     "starting to crack",
     "stunned the world",
+    "the biggest",
     "the one thing",
     "the only way to",
     "the real reason",
@@ -307,12 +310,15 @@ export const CLICKBAIT_PHRASES =
     "went viral",
     "what happened next",
     "what happens next",
+    "what most people",
     "what no one tells you",
     "what nobody tells you",
     "what they don't want you to know",
     "what they dont want you to know",
     "why all",
     "why are all",
+    "why most people",
+    "why nobody",
     "why u should",
     "why you should",
     "will change everything",

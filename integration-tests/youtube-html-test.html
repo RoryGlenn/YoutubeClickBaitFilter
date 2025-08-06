@@ -110,13 +110,25 @@
         <div class="instructions">
             <h3>📋 How to Use This Test:</h3>
             <ol>
-                <li><strong>Go to YouTube</strong> and navigate to a video page with sidebar videos</li>
-                <li><strong>Right-click</strong> on the page and select "View Page Source" (or press Ctrl+U / Cmd+U)</li>
-                <li><strong>Copy the HTML</strong> - you can copy the entire page source or just sections containing sidebar videos</li>
-                <li><strong>Paste it</strong> in the textarea below</li>
-                <li><strong>Click "Test Filtering"</strong> to see which videos would be filtered</li>
+                <li><strong>Quick Start:</strong> Click "🔬 Load Complex Sample HTML" or "📝 Load Sample HTML" to test with pre-loaded examples</li>
+                <li><strong>Test Real YouTube Content:</strong>
+                    <ul style="margin-top: 8px;">
+                        <li>Go to YouTube and navigate to any video page with recommended videos</li>
+                        <li>Right-click on the page and select "View Page Source" (or press Ctrl+U / Cmd+U)</li>
+                        <li>Copy sections containing video recommendations (entire source works too)</li>
+                        <li>Paste it in the textarea below</li>
+                    </ul>
+                </li>
+                <li><strong>Run the Test:</strong> Click "🔍 Test Filtering" to see detailed analysis of which videos would be filtered and why</li>
+                <li><strong>View Results:</strong> Check the stats summary and use "📜 Show Full Log" to see detailed processing information</li>
             </ol>
-            <p><strong>💡 Pro tip:</strong> Look for sections with <code>yt-lockup-view-model</code> or <code>ytd-compact-video-renderer</code> for best results!</p>
+            <p><strong>💡 Pro tips:</strong></p>
+            <ul style="margin-top: 8px; font-size: 14px;">
+                <li>Look for sections with <code>yt-lockup-view-model</code> or <code>ytd-compact-video-renderer</code> for best results</li>
+                <li>The test processes 80+ containers and provides detailed logging for each decision</li>
+                <li>Use the sample buttons first to see how it works, then test with real YouTube HTML</li>
+                <li>The log shows exactly which clickbait phrases/words triggered filtering</li>
+            </ul>
         </div>
         
         <div class="container">
