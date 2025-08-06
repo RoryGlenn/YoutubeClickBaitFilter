@@ -332,20 +332,68 @@ function showSampleHTML() {
 }
 
 function showComplexSampleHTML() {
-    // Option 1: Direct HTML paste (for smaller files)
-//     document.getElementById('htmlInput').value = `
-// <!-- Your complex HTML goes here -->
-//     `.trim();
-    
-    // Option 2: Load from external file (uncomment and modify as needed)
-    fetch('./complex-sample.html')
-        .then(response => response.text())
+    // Load the complex sample HTML directly (avoids fetch security issues)
+    // Add cache-busting parameter to ensure fresh content
+    const cacheBuster = Date.now();
+    fetch(`./complex-sample.html?v=${cacheBuster}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
         .then(html => {
             document.getElementById('htmlInput').value = html;
+            console.log('Complex sample HTML loaded successfully');
         })
         .catch(error => {
             console.error('Error loading complex HTML:', error);
-            alert('Failed to load complex HTML sample');
+            // Fallback to a basic sample if fetch fails
+            console.log('Using fallback sample HTML');
+            document.getElementById('htmlInput').value = `
+<!-- Fallback Complex YouTube HTML Sample -->
+<div class="ytd-watch-flexy">
+  <yt-lockup-view-model class="yt-lockup-view-model-wiz">
+    <div class="yt-lockup-metadata-view-model-wiz">
+      <h3 class="yt-lockup-metadata-view-model-wiz__heading-reset">
+        <a href="/watch?v=test1" class="yt-lockup-metadata-view-model-wiz__title">
+          AI Machine Learning Roadmap: Self Study AI!
+        </a>
+      </h3>
+    </div>
+  </yt-lockup-view-model>
+  
+  <yt-lockup-view-model class="yt-lockup-view-model-wiz">
+    <div class="yt-lockup-metadata-view-model-wiz">
+      <h3 class="yt-lockup-metadata-view-model-wiz__heading-reset">
+        <a href="/watch?v=test2" class="yt-lockup-metadata-view-model-wiz__title">
+          This Is How You Actually Learn AI and Machine learning
+        </a>
+      </h3>
+    </div>
+  </yt-lockup-view-model>
+  
+  <yt-lockup-view-model class="yt-lockup-view-model-wiz">
+    <div class="yt-lockup-metadata-view-model-wiz">
+      <h3 class="yt-lockup-metadata-view-model-wiz__heading-reset">
+        <a href="/watch?v=test3" class="yt-lockup-metadata-view-model-wiz__title">
+          Everyone is Quitting Big Tech.
+        </a>
+      </h3>
+    </div>
+  </yt-lockup-view-model>
+  
+  <yt-lockup-view-model class="yt-lockup-view-model-wiz">
+    <div class="yt-lockup-metadata-view-model-wiz">
+      <h3 class="yt-lockup-metadata-view-model-wiz__heading-reset">
+        <a href="/watch?v=test4" class="yt-lockup-metadata-view-model-wiz__title">
+          The entry level tech job crisis
+        </a>
+      </h3>
+    </div>
+  </yt-lockup-view-model>
+</div>
+            `.trim();
         });
 }
 
