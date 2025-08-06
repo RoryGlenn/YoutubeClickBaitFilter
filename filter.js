@@ -492,12 +492,14 @@ export function hasThreeOrMoreMarks(title) {
     return exCount >= 3 || qmCount >= 3;
 }
 
-// Initialization sequence
-(async function init() {
-    console.log('YouTube ClickBait Filter initialized for page:', currentUrl);
-    await loadSettings();
-    runFilter();
-    setupObserver();
-    setupPageListeners();
-    registerMessageHandlers();
-})();
+// Initialization sequence (only run if not being imported as module)
+if (typeof window !== 'undefined' && window.location) {
+    (async function init() {
+        console.log('YouTube ClickBait Filter initialized for page:', currentUrl);
+        await loadSettings();
+        runFilter();
+        setupObserver();
+        setupPageListeners();
+        registerMessageHandlers();
+    })();
+}
