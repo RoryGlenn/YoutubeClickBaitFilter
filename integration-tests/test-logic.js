@@ -8,7 +8,7 @@ import {
     hasThreeOrMoreMarks,
     filterRules,
     shouldFilter,
-} from '../filter.js';
+} from '../src/content/filter.js';
 
 // Create userSettings for testing (same defaults as extension)
 const userSettings = {
