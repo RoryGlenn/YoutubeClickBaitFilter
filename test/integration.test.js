@@ -4,7 +4,7 @@
  * @fileoverview Integration tests for the YouTube ClickBait Filter extension
  */
 
-import { CLICKBAIT_WORDS, CLICKBAIT_PHRASES } from '../constants.js';
+import { CLICKBAIT_WORDS, CLICKBAIT_PHRASES } from '../src/shared/constants.js';
 
 // Mock Chrome APIs
 global.chrome = {

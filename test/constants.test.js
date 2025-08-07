@@ -4,7 +4,7 @@
  * @fileoverview Unit tests for constants.js to ensure data integrity
  */
 
-import { CLICKBAIT_WORDS, CLICKBAIT_PHRASES } from '../constants.js';
+import { CLICKBAIT_WORDS, CLICKBAIT_PHRASES } from '../src/shared/constants.js';
 
 describe('Constants Data Integrity Tests', () => {
     describe('Superset Detection', () => {

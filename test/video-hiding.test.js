@@ -4,7 +4,7 @@
  * @fileoverview Tests specifically for video container hiding functionality
  */
 
-import { CLICKBAIT_WORDS, CLICKBAIT_PHRASES } from '../constants.js';
+import { CLICKBAIT_WORDS, CLICKBAIT_PHRASES } from '../src/shared/constants.js';
 
 describe('Video Hiding Tests', () => {
     describe('Complete Container Removal', () => {

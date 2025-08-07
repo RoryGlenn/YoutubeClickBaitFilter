@@ -1,6 +1,6 @@
 // filter.js
 
-import { CLICKBAIT_WORDS, CLICKBAIT_PHRASES } from './constants.js';
+import { CLICKBAIT_WORDS, CLICKBAIT_PHRASES } from '../shared/constants.js';
 
 let blockedCount = 0;
 let currentUrl = window.location.href;

@@ -2,7 +2,7 @@
 // JavaScript logic for YouTube HTML structure testing
 
 // Import constants from the parent directory
-import { CLICKBAIT_PHRASES, CLICKBAIT_WORDS } from '../constants.js';
+import { CLICKBAIT_PHRASES, CLICKBAIT_WORDS } from '../src/shared/constants.js';
 import {
     hasThreeUpperCaseWords,
     hasThreeOrMoreMarks,

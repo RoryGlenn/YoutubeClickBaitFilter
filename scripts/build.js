@@ -21,7 +21,7 @@ async function build() {
 
         // Bundle the content script
         await esbuild.build({
-            entryPoints: ['filter.js'],
+            entryPoints: ['src/content/filter.js'],
             bundle: true,
             minify: true,
             platform: 'browser',
@@ -30,8 +30,11 @@ async function build() {
         });
 
         // Copy and fix manifest.json
-        if (fs.existsSync('manifest.json')) {
-            const manifestContent = fs.readFileSync('manifest.json', 'utf8');
+        if (fs.existsSync('src/manifest.json')) {
+            const manifestContent = fs.readFileSync(
+                'src/manifest.json',
+                'utf8'
+            );
             const manifest = JSON.parse(manifestContent);
 
             // Fix paths for the dist folder
@@ -54,35 +57,36 @@ async function build() {
             );
             console.log('Copied and fixed: manifest.json');
         } else {
-            console.warn('Warning: manifest.json not found');
+            console.warn('Warning: src/manifest.json not found');
         }
 
         // Copy other essential files
         const filesToCopy = [
-            'background.js',
-            'popup.html',
-            'popup.js',
-            'popup.css',
+            'src/background/background.js',
+            'src/popup/popup.html',
+            'src/popup/popup.js',
+            'src/popup/popup.css',
         ];
 
         filesToCopy.forEach((file) => {
             if (fs.existsSync(file)) {
-                fs.copyFileSync(file, `dist/${file}`);
-                console.log(`Copied: ${file}`);
+                const fileName = path.basename(file);
+                fs.copyFileSync(file, `dist/${fileName}`);
+                console.log(`Copied: ${fileName}`);
             } else {
                 console.warn(`Warning: ${file} not found`);
             }
         });
 
         // Copy icons directory
-        if (fs.existsSync('icons')) {
+        if (fs.existsSync('assets/icons')) {
             if (!fs.existsSync('dist/icons')) {
                 fs.mkdirSync('dist/icons');
             }
 
-            const iconFiles = fs.readdirSync('icons');
+            const iconFiles = fs.readdirSync('assets/icons');
             iconFiles.forEach((iconFile) => {
-                const sourcePath = `icons/${iconFile}`;
+                const sourcePath = `assets/icons/${iconFile}`;
                 const destPath = `dist/icons/${iconFile}`;
 
                 if (fs.statSync(sourcePath).isDirectory()) {
@@ -106,7 +110,7 @@ async function build() {
                 }
             });
         } else {
-            console.warn('Warning: icons directory not found');
+            console.warn('Warning: assets/icons directory not found');
         }
 
         console.log('Build completed successfully!');

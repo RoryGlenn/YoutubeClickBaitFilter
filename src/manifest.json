@@ -21,13 +21,13 @@
   ],
 
   "background": {
-    "service_worker": "dist/background.js"
+    "service_worker": "background.js"
   },
 
   "content_scripts": [
     {
       "matches": ["*://www.youtube.com/*"],
-      "js": ["dist/filter.bundle.js"],
+      "js": ["filter.bundle.js"],
       "run_at": "document_idle"
     }
   ],
