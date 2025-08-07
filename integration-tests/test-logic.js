@@ -3,7 +3,12 @@
 
 // Import constants from the parent directory
 import { CLICKBAIT_PHRASES, CLICKBAIT_WORDS } from '../constants.js';
-import {hasThreeUpperCaseWords, hasThreeOrMoreMarks, filterRules, shouldFilter } from '../filter.js';
+import {
+    hasThreeUpperCaseWords,
+    hasThreeOrMoreMarks,
+    filterRules,
+    shouldFilter,
+} from '../filter.js';
 
 // Create userSettings for testing (same defaults as extension)
 const userSettings = {
@@ -11,27 +16,35 @@ const userSettings = {
     filterClickbaitWords: true,
     filterClickbaitPhrases: true,
     filterUppercase: true,
-    filterPunctuation: true
+    filterPunctuation: true,
 };
 
 // Test-specific wrapper that provides detailed logging while using the real shouldFilter logic
 function shouldFilterWithLogging(text) {
     if (!text || typeof text !== 'string') return false;
-    
+
     // Use the real shouldFilter function first
     const willFilter = shouldFilter(text);
-    
+
     if (willFilter) {
         // If it will be filtered, figure out why by checking each rule manually
-        filterRules.forEach(({flag, test}) => {
+        filterRules.forEach(({ flag, test }) => {
             if (userSettings[flag] && test(text)) {
                 // Provide specific match details
                 if (flag === 'filterClickbaitWords') {
-                    const matchedWords = CLICKBAIT_WORDS.filter(w => text.toLowerCase().includes(w));
-                    log(`  ✓ Matched clickbait word(s): "${matchedWords.join('", "')}"`);
+                    const matchedWords = CLICKBAIT_WORDS.filter((w) =>
+                        text.toLowerCase().includes(w)
+                    );
+                    log(
+                        `  ✓ Matched clickbait word(s): "${matchedWords.join('", "')}"`
+                    );
                 } else if (flag === 'filterClickbaitPhrases') {
-                    const matchedPhrases = CLICKBAIT_PHRASES.filter(p => text.toLowerCase().includes(p.toLowerCase()));
-                    log(`  ✓ Matched clickbait phrase(s): "${matchedPhrases.join('", "')}"`);
+                    const matchedPhrases = CLICKBAIT_PHRASES.filter((p) =>
+                        text.toLowerCase().includes(p.toLowerCase())
+                    );
+                    log(
+                        `  ✓ Matched clickbait phrase(s): "${matchedPhrases.join('", "')}"`
+                    );
                 } else if (flag === 'filterUppercase') {
                     log(`  ✓ Excessive uppercase detected`);
                 } else if (flag === 'filterPunctuation') {
@@ -40,7 +53,7 @@ function shouldFilterWithLogging(text) {
             }
         });
     }
-    
+
     return willFilter;
 }
 
@@ -60,7 +73,7 @@ function testFiltering() {
     const testContent = document.getElementById('testContent');
     const logDiv = document.getElementById('log');
     const statsDiv = document.getElementById('stats');
-    
+
     if (!htmlInput.value.trim()) {
         alert('Please paste YouTube HTML first!');
         return;
@@ -70,7 +83,7 @@ function testFiltering() {
     filteredCount = 0;
     keptCount = 0;
     logOutput = '';
-    
+
     log('=== YouTube Real HTML Filtering Test Started ===');
     log('Loading HTML content...');
 
@@ -82,7 +95,7 @@ function testFiltering() {
     const videoSelectors = [
         // Legacy YouTube selectors
         'ytd-video-renderer',
-        'ytd-rich-item-renderer', 
+        'ytd-rich-item-renderer',
         'ytd-grid-video-renderer',
         'ytd-compact-video-renderer',
         'ytd-playlist-video-renderer',
@@ -90,38 +103,48 @@ function testFiltering() {
         'ytd-radio-renderer',
         // New 2025+ YouTube structure
         'yt-lockup-view-model',
-        '[class*="yt-lockup-view-model"]'
+        '[class*="yt-lockup-view-model"]',
     ];
 
-    const allContainers = testContent.querySelectorAll(videoSelectors.join(', '));
+    const allContainers = testContent.querySelectorAll(
+        videoSelectors.join(', ')
+    );
     log(`Found ${allContainers.length} video containers total`);
 
     if (allContainers.length === 0) {
         log('⚠️  No video containers found with standard selectors!');
         log('Trying alternative detection...');
-        
+
         // Try to find any elements that might contain video titles
         const alternativeSelectors = [
             'a[href*="/watch"]',
             '[class*="lockup"]',
             '[class*="metadata"]',
-            '#video-title', 
+            '#video-title',
             '[id*="title"]',
             '[aria-label*="minutes"]',
-            '[title]'
+            '[title]',
         ];
-        
-        const possibleElements = testContent.querySelectorAll(alternativeSelectors.join(', '));
+
+        const possibleElements = testContent.querySelectorAll(
+            alternativeSelectors.join(', ')
+        );
         log(`Found ${possibleElements.length} possible video-related elements`);
-        
+
         // Check a few of these elements for titles
         let foundTitles = 0;
         possibleElements.slice(0, 20).forEach((el, i) => {
-            const text = el.textContent?.trim() || el.getAttribute('aria-label')?.trim() || el.getAttribute('title')?.trim() || '';
+            const text =
+                el.textContent?.trim() ||
+                el.getAttribute('aria-label')?.trim() ||
+                el.getAttribute('title')?.trim() ||
+                '';
             if (text && text.length > 10 && text.length < 200) {
                 foundTitles++;
-                log(`  Possible title ${foundTitles}: "${text.substring(0, 60)}..."`);
-                
+                log(
+                    `  Possible title ${foundTitles}: "${text.substring(0, 60)}..."`
+                );
+
                 if (shouldFilterWithLogging(text)) {
                     log(`    → Would be FILTERED`);
                     filteredCount++;
@@ -131,19 +154,23 @@ function testFiltering() {
                 }
             }
         });
-        
+
         if (foundTitles === 0) {
             log('❌ No video titles found in the HTML');
-            log('Make sure you copied HTML from a YouTube page with sidebar videos');
+            log(
+                'Make sure you copied HTML from a YouTube page with sidebar videos'
+            );
         }
     } else {
         // Process each container with standard logic
         log(`Processing ${allContainers.length} containers...`);
-        
+
         allContainers.forEach((container, index) => {
             try {
-                log(`\n--- Processing Container ${index + 1} (${container.tagName || container.className}) ---`);
-                
+                log(
+                    `\n--- Processing Container ${index + 1} (${container.tagName || container.className}) ---`
+                );
+
                 // Try multiple selectors to find the title (both legacy and new)
                 const titleSelectors = [
                     // Legacy selectors
@@ -162,7 +189,7 @@ function testFiltering() {
                     'h3.yt-lockup-metadata-view-model-wiz__heading-reset a',
                     '[class*="yt-lockup-metadata-view-model-wiz__title"]',
                     '[class*="lockup"] a[href*="/watch"]',
-                    'a[href*="/watch"][aria-label]'
+                    'a[href*="/watch"][aria-label]',
                 ];
 
                 let title = '';
@@ -173,9 +200,11 @@ function testFiltering() {
                 for (const selector of titleSelectors) {
                     titleElement = container.querySelector(selector);
                     if (titleElement) {
-                        title = titleElement.textContent?.trim() || 
-                               titleElement.getAttribute('aria-label')?.trim() ||
-                               titleElement.getAttribute('title')?.trim() || '';
+                        title =
+                            titleElement.textContent?.trim() ||
+                            titleElement.getAttribute('aria-label')?.trim() ||
+                            titleElement.getAttribute('title')?.trim() ||
+                            '';
                         if (title) {
                             usedSelector = selector;
                             log(`  Found title via selector "${selector}"`);
@@ -186,8 +215,10 @@ function testFiltering() {
 
                 // Fallback: try aria-label on container
                 if (!title) {
-                    title = container.getAttribute('aria-label')?.trim() ||
-                           container.getAttribute('title')?.trim() || '';
+                    title =
+                        container.getAttribute('aria-label')?.trim() ||
+                        container.getAttribute('title')?.trim() ||
+                        '';
                     if (title) {
                         usedSelector = 'container attribute';
                         log(`  Found title via container attribute`);
@@ -196,29 +227,34 @@ function testFiltering() {
 
                 if (title) {
                     log(`  Title: "${title}"`);
-                    
+
                     if (shouldFilterWithLogging(title)) {
                         log(`  🚫 DECISION: FILTER this video`);
                         container.classList.add('filtered-video');
-                        container.innerHTML = '<div class="filter-badge filtered">FILTERED</div>' + container.innerHTML;
+                        container.innerHTML =
+                            '<div class="filter-badge filtered">FILTERED</div>' +
+                            container.innerHTML;
                         filteredCount++;
                     } else {
                         log(`  ✅ DECISION: KEEP this video`);
                         container.classList.add('kept-video');
-                        container.innerHTML = '<div class="filter-badge kept">KEPT</div>' + container.innerHTML;
+                        container.innerHTML =
+                            '<div class="filter-badge kept">KEPT</div>' +
+                            container.innerHTML;
                         keptCount++;
                     }
                 } else {
                     log(`  ⚠️  No title found for this container`);
-                    log(`  Container HTML preview: ${container.innerHTML.substring(0, 200)}...`);
+                    log(
+                        `  Container HTML preview: ${container.innerHTML.substring(0, 200)}...`
+                    );
                 }
-
             } catch (error) {
                 log(`  ❌ Error processing container: ${error.message}`);
                 console.error('Container processing error:', error);
             }
         });
-        
+
         log(`Completed processing all ${allContainers.length} containers`);
         console.log('=== CONTAINER PROCESSING COMPLETE ===');
     }
@@ -232,12 +268,12 @@ function testFiltering() {
     // Update UI
     console.log('Updating UI with log output length:', logOutput.length);
     console.log('Log div element:', logDiv);
-    
+
     logDiv.className = 'log';
     logDiv.innerHTML = logOutput;
-    
+
     console.log('Log div after update:', logDiv.innerHTML.length, 'characters');
-    
+
     // Show the log toggle button if there's content
     if (window.showLogToggle) {
         console.log('Calling showLogToggle');
@@ -245,7 +281,7 @@ function testFiltering() {
     } else {
         console.log('showLogToggle not available');
     }
-    
+
     statsDiv.innerHTML = `
         <div class="stats">
             <h3>📊 Test Results</h3>
@@ -336,17 +372,17 @@ function showComplexSampleHTML() {
     // Add cache-busting parameter to ensure fresh content
     const cacheBuster = Date.now();
     fetch(`./complex-sample.html?v=${cacheBuster}`)
-        .then(response => {
+        .then((response) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             return response.text();
         })
-        .then(html => {
+        .then((html) => {
             document.getElementById('htmlInput').value = html;
             console.log('Complex sample HTML loaded successfully');
         })
-        .catch(error => {
+        .catch((error) => {
             console.error('Error loading complex HTML:', error);
             // Fallback to a basic sample if fetch fails
             console.log('Using fallback sample HTML');

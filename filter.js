@@ -1,6 +1,6 @@
 // filter.js
 
-import {CLICKBAIT_WORDS, CLICKBAIT_PHRASES} from './constants.js';
+import { CLICKBAIT_WORDS, CLICKBAIT_PHRASES } from './constants.js';
 
 let blockedCount = 0;
 let currentUrl = window.location.href;
@@ -9,7 +9,7 @@ let userSettings = {
     filterClickbaitWords: true,
     filterClickbaitPhrases: true,
     filterUppercase: true,
-    filterPunctuation: true
+    filterPunctuation: true,
 };
 
 /**
@@ -19,20 +19,22 @@ let userSettings = {
 export const filterRules = [
     {
         flag: 'filterClickbaitWords',
-        test: text => CLICKBAIT_WORDS.some(w => text.toLowerCase().includes(w))
+        test: (text) =>
+            CLICKBAIT_WORDS.some((w) => text.toLowerCase().includes(w)),
     },
     {
         flag: 'filterUppercase',
-        test: hasThreeUpperCaseWords
+        test: hasThreeUpperCaseWords,
     },
     {
         flag: 'filterPunctuation',
-        test: hasThreeOrMoreMarks
+        test: hasThreeOrMoreMarks,
     },
     {
         flag: 'filterClickbaitPhrases',
-        test: text => CLICKBAIT_PHRASES.some(w => text.toLowerCase().includes(w))
-    }
+        test: (text) =>
+            CLICKBAIT_PHRASES.some((w) => text.toLowerCase().includes(w)),
+    },
 ];
 
 /**
@@ -40,9 +42,9 @@ export const filterRules = [
  * @returns {Promise<void>} Resolves when settings have been loaded.
  */
 function loadSettings() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         try {
-            chrome.storage.sync.get(userSettings, stored => {
+            chrome.storage.sync.get(userSettings, (stored) => {
                 userSettings = stored;
                 resolve();
             });
@@ -60,17 +62,20 @@ function updateBadge() {
     // Add a small delay to ensure background script is ready
     setTimeout(() => {
         try {
-            chrome.runtime.sendMessage({
-                type: 'updateBadge',
-                count: blockedCount
-            }, (response) => {
-                // Handle the response or connection errors
-                if (chrome.runtime.lastError) {
-                    // Silently ignore connection errors - background script might not be ready
-                    // Don't log this as it can spam the console during startup
-                    return;
+            chrome.runtime.sendMessage(
+                {
+                    type: 'updateBadge',
+                    count: blockedCount,
+                },
+                (response) => {
+                    // Handle the response or connection errors
+                    if (chrome.runtime.lastError) {
+                        // Silently ignore connection errors - background script might not be ready
+                        // Don't log this as it can spam the console during startup
+                        return;
+                    }
                 }
-            });
+            );
         } catch (error) {
             // Silently ignore errors during startup
             return;
@@ -84,7 +89,13 @@ function updateBadge() {
 function checkUrlChange() {
     const newUrl = window.location.href;
     if (newUrl !== currentUrl) {
-        console.log('URL changed from', currentUrl, 'to', newUrl, '- resetting counter');
+        console.log(
+            'URL changed from',
+            currentUrl,
+            'to',
+            newUrl,
+            '- resetting counter'
+        );
         currentUrl = newUrl;
         blockedCount = 0;
         updateBadge(); // Update badge when counter resets
@@ -97,7 +108,9 @@ function checkUrlChange() {
  * @returns {boolean} True if any enabled rule matches the text.
  */
 export function shouldFilter(text) {
-    return filterRules.some(({flag, test}) => userSettings[flag] && test(text));
+    return filterRules.some(
+        ({ flag, test }) => userSettings[flag] && test(text)
+    );
 }
 
 /**
@@ -106,19 +119,21 @@ export function shouldFilter(text) {
 function filterStandardCards() {
     // Target all common YouTube video container selectors (including new 2025 structure)
     const videoSelectors = [
-        'ytd-video-renderer',           // Standard list view videos (legacy)
-        'ytd-rich-item-renderer',       // Home page grid videos (legacy)
-        'ytd-grid-video-renderer',      // Grid view videos (legacy)
-        'ytd-compact-video-renderer',   // Sidebar and suggested videos (legacy)
-        'ytd-playlist-video-renderer',  // Playlist videos (legacy)
-        'ytd-movie-renderer',           // Movie content (legacy)
-        'ytd-radio-renderer',           // Radio/mix content (legacy)
-        'yt-lockup-view-model',         // New 2025+ sidebar video structure
-        '[class*="yt-lockup-view-model"]' // Any variations of the new structure
+        'ytd-video-renderer', // Standard list view videos (legacy)
+        'ytd-rich-item-renderer', // Home page grid videos (legacy)
+        'ytd-grid-video-renderer', // Grid view videos (legacy)
+        'ytd-compact-video-renderer', // Sidebar and suggested videos (legacy)
+        'ytd-playlist-video-renderer', // Playlist videos (legacy)
+        'ytd-movie-renderer', // Movie content (legacy)
+        'ytd-radio-renderer', // Radio/mix content (legacy)
+        'yt-lockup-view-model', // New 2025+ sidebar video structure
+        '[class*="yt-lockup-view-model"]', // Any variations of the new structure
     ];
 
     const allContainers = document.querySelectorAll(videoSelectors.join(', '));
-    console.log(`Checking ${allContainers.length} video containers (including new YouTube structure)`);
+    console.log(
+        `Checking ${allContainers.length} video containers (including new YouTube structure)`
+    );
 
     allContainers.forEach((card, index) => {
         try {
@@ -143,7 +158,7 @@ function filterStandardCards() {
                 'h3.yt-lockup-metadata-view-model-wiz__heading-reset a',
                 '[class*="yt-lockup-metadata-view-model-wiz__title"]',
                 '[class*="lockup"] a[href*="/watch"]', // Generic lockup with watch links
-                'a[href*="/watch"][aria-label]'  // Any watch link with aria-label
+                'a[href*="/watch"][aria-label]', // Any watch link with aria-label
             ];
 
             let title = '';
@@ -153,11 +168,15 @@ function filterStandardCards() {
             for (const selector of titleSelectors) {
                 titleElement = card.querySelector(selector);
                 if (titleElement) {
-                    title = titleElement.textContent?.trim() || 
-                           titleElement.getAttribute('aria-label')?.trim() || 
-                           titleElement.getAttribute('title')?.trim() || '';
+                    title =
+                        titleElement.textContent?.trim() ||
+                        titleElement.getAttribute('aria-label')?.trim() ||
+                        titleElement.getAttribute('title')?.trim() ||
+                        '';
                     if (title) {
-                        console.log(`Found title via selector "${selector}": "${title}"`);
+                        console.log(
+                            `Found title via selector "${selector}": "${title}"`
+                        );
                         break;
                     }
                 }
@@ -165,15 +184,21 @@ function filterStandardCards() {
 
             // If we still don't have a title, try getting it from aria-label on the card itself
             if (!title) {
-                title = card.getAttribute('aria-label')?.trim() || 
-                       card.getAttribute('title')?.trim() || '';
+                title =
+                    card.getAttribute('aria-label')?.trim() ||
+                    card.getAttribute('title')?.trim() ||
+                    '';
                 if (title) {
-                    console.log(`Found title via container attribute: "${title}"`);
+                    console.log(
+                        `Found title via container attribute: "${title}"`
+                    );
                 }
             }
 
             if (title) {
-                console.log(`Container ${index + 1} (${card.tagName || card.className}): "${title}"`);
+                console.log(
+                    `Container ${index + 1} (${card.tagName || card.className}): "${title}"`
+                );
                 if (shouldFilter(title)) {
                     console.log('✓ Filtering video with title:', title);
                     card.style.display = 'none'; // Hide first
@@ -183,7 +208,9 @@ function filterStandardCards() {
                     console.log('✗ Keeping video with title:', title);
                 }
             } else {
-                console.log(`⚠ Container ${index + 1} (${card.tagName || card.className}): No title found`);
+                console.log(
+                    `⚠ Container ${index + 1} (${card.tagName || card.className}): No title found`
+                );
                 // Log a snippet of the HTML to help debug
                 const htmlSnippet = card.outerHTML?.substring(0, 200) + '...';
                 console.log('HTML snippet:', htmlSnippet);
@@ -198,29 +225,38 @@ function filterStandardCards() {
  * Remove elements identified by aria-label based on filtering rules.
  */
 function filterAriaLabels() {
-    document.querySelectorAll('[aria-label]').forEach(el => {
+    document.querySelectorAll('[aria-label]').forEach((el) => {
         try {
             const label = el.getAttribute('aria-label')?.trim();
             if (label && shouldFilter(label)) {
                 console.log('Filtering aria-label element:', label);
-                
+
                 // Find the appropriate container to remove - be more specific
-                const wrapper = el.closest('ytd-rich-item-renderer') ||
-                               el.closest('ytd-video-renderer') ||
-                               el.closest('ytd-grid-video-renderer') ||
-                               el.closest('ytd-compact-video-renderer') ||
-                               el.closest('div.ytGridShelfViewModelGridShelfItem');
-                
+                const wrapper =
+                    el.closest('ytd-rich-item-renderer') ||
+                    el.closest('ytd-video-renderer') ||
+                    el.closest('ytd-grid-video-renderer') ||
+                    el.closest('ytd-compact-video-renderer') ||
+                    el.closest('div.ytGridShelfViewModelGridShelfItem');
+
                 // Only remove if we found a specific video container
-                if (wrapper && (wrapper.tagName.toLowerCase().startsWith('ytd-') || 
-                              wrapper.className.includes('ytGridShelfViewModelGridShelfItem'))) {
+                if (
+                    wrapper &&
+                    (wrapper.tagName.toLowerCase().startsWith('ytd-') ||
+                        wrapper.className.includes(
+                            'ytGridShelfViewModelGridShelfItem'
+                        ))
+                ) {
                     wrapper.style.display = 'none'; // Hide first
                     wrapper.remove(); // Then remove
                     blockedCount++;
                 } else {
                     // Fallback: just hide the element itself if we can't find a video container
                     // This prevents removing entire sections
-                    console.log('Could not find specific video container, skipping removal for:', label);
+                    console.log(
+                        'Could not find specific video container, skipping removal for:',
+                        label
+                    );
                 }
             }
         } catch (error) {
@@ -236,37 +272,40 @@ function filterNewLayouts() {
     try {
         // Be more selective - only target containers that are clearly video items
         const containerSelectors = [
-            '[data-video-id]',  // Specific video containers
-            'a[href*="/watch"]' // Direct video links
+            '[data-video-id]', // Specific video containers
+            'a[href*="/watch"]', // Direct video links
         ];
 
-        containerSelectors.forEach(selector => {
-            document.querySelectorAll(selector).forEach(container => {
+        containerSelectors.forEach((selector) => {
+            document.querySelectorAll(selector).forEach((container) => {
                 try {
                     // Skip if already processed by other filters
-                    if (container.tagName.toLowerCase().startsWith('ytd-') || 
+                    if (
+                        container.tagName.toLowerCase().startsWith('ytd-') ||
                         container.style.display === 'none' ||
-                        !container.parentNode) {
+                        !container.parentNode
+                    ) {
                         return;
                     }
-                    
+
                     // For video links, get the container that holds the entire video item
                     let targetContainer = container;
                     if (selector.includes('href*="/watch"')) {
                         // Find the video container, but be more specific
-                        targetContainer = container.closest('ytd-video-renderer') ||
-                                        container.closest('ytd-rich-item-renderer') ||
-                                        container.closest('ytd-grid-video-renderer') ||
-                                        container.closest('ytd-compact-video-renderer') ||
-                                        container.closest('[class*="video-item"]') ||
-                                        container.closest('[class*="videoItem"]');
-                        
+                        targetContainer =
+                            container.closest('ytd-video-renderer') ||
+                            container.closest('ytd-rich-item-renderer') ||
+                            container.closest('ytd-grid-video-renderer') ||
+                            container.closest('ytd-compact-video-renderer') ||
+                            container.closest('[class*="video-item"]') ||
+                            container.closest('[class*="videoItem"]');
+
                         // If we can't find a specific video container, skip
                         if (!targetContainer || targetContainer === container) {
                             return;
                         }
                     }
-                    
+
                     // Look for title text in various possible locations
                     const titleSelectors = [
                         'h3',
@@ -274,20 +313,26 @@ function filterNewLayouts() {
                         '[class*="title"]',
                         'a[href*="/watch"]',
                         '[aria-label]',
-                        '[title]'
+                        '[title]',
                     ];
 
                     for (const titleSelector of titleSelectors) {
-                        const titleElements = targetContainer.querySelectorAll(titleSelector);
-                        
+                        const titleElements =
+                            targetContainer.querySelectorAll(titleSelector);
+
                         for (const titleEl of titleElements) {
-                            const title = titleEl.textContent?.trim() || 
-                                        titleEl.getAttribute('aria-label')?.trim() || 
-                                        titleEl.getAttribute('title')?.trim() || '';
-                            
+                            const title =
+                                titleEl.textContent?.trim() ||
+                                titleEl.getAttribute('aria-label')?.trim() ||
+                                titleEl.getAttribute('title')?.trim() ||
+                                '';
+
                             if (title && shouldFilter(title)) {
-                                console.log('Filtering new layout container with title:', title);
-                                
+                                console.log(
+                                    'Filtering new layout container with title:',
+                                    title
+                                );
+
                                 targetContainer.style.display = 'none'; // Hide first
                                 targetContainer.remove(); // Then remove
                                 blockedCount++;
@@ -296,7 +341,10 @@ function filterNewLayouts() {
                         }
                     }
                 } catch (error) {
-                    console.warn('Error processing new layout container:', error);
+                    console.warn(
+                        'Error processing new layout container:',
+                        error
+                    );
                 }
             });
         });
@@ -310,42 +358,52 @@ function filterNewLayouts() {
  */
 function filterRemainingVideos() {
     console.log('Running final filtering pass...');
-    
+
     try {
         // Target any links to watch pages that might have escaped other filters
         const watchLinks = document.querySelectorAll('a[href*="/watch"]');
         console.log(`Checking ${watchLinks.length} watch links`);
-        
-        watchLinks.forEach(link => {
+
+        watchLinks.forEach((link) => {
             try {
-                const title = link.textContent?.trim() || 
-                            link.getAttribute('aria-label')?.trim() || 
-                            link.getAttribute('title')?.trim() || '';
-                
+                const title =
+                    link.textContent?.trim() ||
+                    link.getAttribute('aria-label')?.trim() ||
+                    link.getAttribute('title')?.trim() ||
+                    '';
+
                 if (title) {
                     console.log('Checking watch link title:', title);
                     if (shouldFilter(title)) {
                         console.log('✓ Filtering remaining video link:', title);
-                        
+
                         // Find the video container - be more specific about what we remove
-                        const videoContainer = link.closest('ytd-video-renderer') ||
-                                             link.closest('ytd-rich-item-renderer') ||
-                                             link.closest('ytd-grid-video-renderer') ||
-                                             link.closest('ytd-compact-video-renderer');
-                        
+                        const videoContainer =
+                            link.closest('ytd-video-renderer') ||
+                            link.closest('ytd-rich-item-renderer') ||
+                            link.closest('ytd-grid-video-renderer') ||
+                            link.closest('ytd-compact-video-renderer');
+
                         if (videoContainer) {
-                            console.log('✓ Removing container:', videoContainer.tagName);
+                            console.log(
+                                '✓ Removing container:',
+                                videoContainer.tagName
+                            );
                             videoContainer.style.display = 'none';
                             videoContainer.remove();
                             blockedCount++;
                         } else {
                             // If we can't find a specific ytd container, look for other video-specific containers
-                            const fallbackContainer = link.closest('[class*="video-item"]') ||
-                                                     link.closest('[class*="videoItem"]') ||
-                                                     link.closest('[data-video-id]');
-                            
+                            const fallbackContainer =
+                                link.closest('[class*="video-item"]') ||
+                                link.closest('[class*="videoItem"]') ||
+                                link.closest('[data-video-id]');
+
                             if (fallbackContainer) {
-                                console.log('✓ Removing fallback container:', fallbackContainer.tagName);
+                                console.log(
+                                    '✓ Removing fallback container:',
+                                    fallbackContainer.tagName
+                                );
                                 fallbackContainer.style.display = 'none';
                                 fallbackContainer.remove();
                                 blockedCount++;
@@ -365,27 +423,42 @@ function filterRemainingVideos() {
         });
 
         // Additional pass: look for broken video containers, but be more selective
-        const allContainers = document.querySelectorAll('ytd-compact-video-renderer, ytd-video-renderer, ytd-rich-item-renderer, ytd-grid-video-renderer');
-        console.log(`Checking ${allContainers.length} containers for broken state`);
-        
-        allContainers.forEach(container => {
+        const allContainers = document.querySelectorAll(
+            'ytd-compact-video-renderer, ytd-video-renderer, ytd-rich-item-renderer, ytd-grid-video-renderer'
+        );
+        console.log(
+            `Checking ${allContainers.length} containers for broken state`
+        );
+
+        allContainers.forEach((container) => {
             try {
                 // Check if this container has no visible title text
-                const titleElement = container.querySelector('#video-title, a#video-title, h3 a, .title a');
+                const titleElement = container.querySelector(
+                    '#video-title, a#video-title, h3 a, .title a'
+                );
                 const titleText = titleElement?.textContent?.trim() || '';
-                
+
                 // If container exists but has no title text AND has a thumbnail, it might be in a broken state
-                if (!titleText && container.querySelector('img[src], ytd-thumbnail, [class*="thumbnail"]')) {
-                    console.log('✓ Removing video container with missing title (likely filtered)');
+                if (
+                    !titleText &&
+                    container.querySelector(
+                        'img[src], ytd-thumbnail, [class*="thumbnail"]'
+                    )
+                ) {
+                    console.log(
+                        '✓ Removing video container with missing title (likely filtered)'
+                    );
                     container.style.display = 'none';
                     container.remove();
                     blockedCount++;
                 }
             } catch (error) {
-                console.warn('Error checking for broken video containers:', error);
+                console.warn(
+                    'Error checking for broken video containers:',
+                    error
+                );
             }
         });
-
     } catch (error) {
         console.warn('Error in filterRemainingVideos:', error);
     }
@@ -396,23 +469,23 @@ function filterRemainingVideos() {
  */
 function runFilter() {
     if (!userSettings.enabled) return;
-    
+
     // Check if URL has changed and reset counter if needed
     checkUrlChange();
-    
+
     const previousCount = blockedCount;
-    
+
     // Run all filtering methods - be comprehensive
     filterStandardCards();
     filterAriaLabels();
     filterNewLayouts();
     filterRemainingVideos(); // Add this missing call
-    
+
     // Only update badge if count changed
     if (blockedCount !== previousCount) {
         updateBadge();
     }
-    
+
     console.log('runFilter - blockedCount for current page:', blockedCount);
 }
 
@@ -422,7 +495,7 @@ function runFilter() {
 function setupObserver() {
     new MutationObserver(runFilter).observe(document.body, {
         childList: true,
-        subtree: true
+        subtree: true,
     });
 }
 
@@ -436,14 +509,14 @@ function registerMessageHandlers() {
                 userSettings = message.settings;
                 if (userSettings.enabled) runFilter();
                 else window.location.reload();
-                sendResponse({ok: true});
+                sendResponse({ ok: true });
             }
             if (message.type === 'getBlockedCount') {
-                sendResponse({blockedCount});
+                sendResponse({ blockedCount });
             }
         } catch (error) {
             console.error('Error handling message:', error);
-            sendResponse({error: error.message});
+            sendResponse({ error: error.message });
         }
     });
 }
@@ -458,7 +531,7 @@ function setupPageListeners() {
             checkUrlChange();
         }
     });
-    
+
     // Listen for popstate events (back/forward navigation)
     window.addEventListener('popstate', () => {
         checkUrlChange();
@@ -495,7 +568,10 @@ export function hasThreeOrMoreMarks(title) {
 // Initialization sequence (only run if not being imported as module)
 if (typeof window !== 'undefined' && window.location) {
     (async function init() {
-        console.log('YouTube ClickBait Filter initialized for page:', currentUrl);
+        console.log(
+            'YouTube ClickBait Filter initialized for page:',
+            currentUrl
+        );
         await loadSettings();
         runFilter();
         setupObserver();

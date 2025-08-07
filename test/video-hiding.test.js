@@ -12,12 +12,12 @@ describe('Video Hiding Tests', () => {
             // Test that we have comprehensive selector coverage
             const expectedSelectors = [
                 'ytd-video-renderer',
-                'ytd-rich-item-renderer', 
+                'ytd-rich-item-renderer',
                 'ytd-grid-video-renderer',
                 'ytd-compact-video-renderer',
                 'ytd-playlist-video-renderer',
                 'ytd-movie-renderer',
-                'ytd-radio-renderer'
+                'ytd-radio-renderer',
             ];
 
             // Verify comprehensive selector coverage
@@ -34,7 +34,7 @@ describe('Video Hiding Tests', () => {
                 'a#video-title',
                 '[id="video-title"]',
                 'h3 a',
-                '.title a'
+                '.title a',
             ];
 
             // Verify we have comprehensive title selector coverage
@@ -49,7 +49,7 @@ describe('Video Hiding Tests', () => {
                 'ytd-rich-item-renderer',
                 'ytd-video-renderer',
                 'ytd-grid-video-renderer',
-                '[class*="video"]'
+                '[class*="video"]',
             ];
 
             // Verify comprehensive wrapper selector coverage
@@ -62,22 +62,38 @@ describe('Video Hiding Tests', () => {
     describe('Filtering Logic Verification', () => {
         test('should properly identify clickbait content for removal', () => {
             const testCases = [
-                { title: 'SHOCKING discovery that will BLOW your mind!!!', shouldFilter: true },
-                { title: 'You won\'t believe what happened next', shouldFilter: true },
-                { title: 'URGENT WARNING about this new threat', shouldFilter: true },
-                { title: 'How to learn JavaScript - beginner tutorial', shouldFilter: false },
-                { title: 'React vs Vue comparison', shouldFilter: false }
+                {
+                    title: 'SHOCKING discovery that will BLOW your mind!!!',
+                    shouldFilter: true,
+                },
+                {
+                    title: "You won't believe what happened next",
+                    shouldFilter: true,
+                },
+                {
+                    title: 'URGENT WARNING about this new threat',
+                    shouldFilter: true,
+                },
+                {
+                    title: 'How to learn JavaScript - beginner tutorial',
+                    shouldFilter: false,
+                },
+                { title: 'React vs Vue comparison', shouldFilter: false },
             ];
 
             testCases.forEach(({ title, shouldFilter }) => {
                 const lowerTitle = title.toLowerCase();
-                
+
                 // Check clickbait words
-                const hasClickbaitWord = CLICKBAIT_WORDS.some(word => lowerTitle.includes(word));
-                
+                const hasClickbaitWord = CLICKBAIT_WORDS.some((word) =>
+                    lowerTitle.includes(word)
+                );
+
                 // Check clickbait phrases
-                const hasClickbaitPhrase = CLICKBAIT_PHRASES.some(phrase => lowerTitle.includes(phrase));
-                
+                const hasClickbaitPhrase = CLICKBAIT_PHRASES.some((phrase) =>
+                    lowerTitle.includes(phrase)
+                );
+
                 // Check uppercase (3+ uppercase words)
                 const words = title.trim().split(/\s+/);
                 let uppercaseCount = 0;
@@ -87,14 +103,18 @@ describe('Video Hiding Tests', () => {
                     }
                 }
                 const hasExcessiveUppercase = uppercaseCount >= 3;
-                
+
                 // Check punctuation (3+ exclamation/question marks)
                 const exCount = (title.match(/!/g) || []).length;
                 const qmCount = (title.match(/\?/g) || []).length;
                 const hasExcessivePunctuation = exCount >= 3 || qmCount >= 3;
-                
-                const actualShouldFilter = hasClickbaitWord || hasClickbaitPhrase || hasExcessiveUppercase || hasExcessivePunctuation;
-                
+
+                const actualShouldFilter =
+                    hasClickbaitWord ||
+                    hasClickbaitPhrase ||
+                    hasExcessiveUppercase ||
+                    hasExcessivePunctuation;
+
                 expect(actualShouldFilter).toBe(shouldFilter);
             });
         });
@@ -107,13 +127,13 @@ describe('Video Hiding Tests', () => {
                 { tagName: 'DIV', shouldProcess: true },
                 { tagName: 'SECTION', shouldProcess: true },
                 { tagName: 'YTD-VIDEO-RENDERER', shouldProcess: false },
-                { tagName: 'ytd-rich-item-renderer', shouldProcess: false }
+                { tagName: 'ytd-rich-item-renderer', shouldProcess: false },
             ];
 
             containerTypes.forEach(({ tagName, shouldProcess }) => {
                 const isYtdElement = tagName.toLowerCase().startsWith('ytd-');
                 const shouldProcessContainer = !isYtdElement;
-                
+
                 expect(shouldProcessContainer).toBe(shouldProcess);
             });
         });
@@ -121,9 +141,9 @@ describe('Video Hiding Tests', () => {
         test('should handle various title element patterns', () => {
             const titleElementSelectors = [
                 'h3',
-                '[role="heading"]', 
+                '[role="heading"]',
                 '[class*="title"]',
-                'a[href*="/watch"]'
+                'a[href*="/watch"]',
             ];
 
             // Verify we have good coverage of title element patterns
@@ -141,10 +161,10 @@ describe('Video Hiding Tests', () => {
                 { textContent: undefined },
                 { textContent: '' },
                 null,
-                undefined
+                undefined,
             ];
 
-            mockTitleSources.forEach(titleEl => {
+            mockTitleSources.forEach((titleEl) => {
                 expect(() => {
                     const title = titleEl?.textContent?.trim() || '';
                     // Empty title should not cause errors
@@ -155,11 +175,11 @@ describe('Video Hiding Tests', () => {
 
         test('should handle empty or null titles', () => {
             const emptyTitles = ['', null, undefined, '   ', '\t\n'];
-            
-            emptyTitles.forEach(title => {
+
+            emptyTitles.forEach((title) => {
                 expect(() => {
                     const safeTitle = (title || '').trim();
-                    const hasClickbait = CLICKBAIT_WORDS.some(word => 
+                    const hasClickbait = CLICKBAIT_WORDS.some((word) =>
                         safeTitle.toLowerCase().includes(word)
                     );
                     expect(hasClickbait).toBe(false);
@@ -169,15 +189,21 @@ describe('Video Hiding Tests', () => {
 
         test('should handle getAttribute fallback gracefully', () => {
             const mockElements = [
-                { textContent: '', getAttribute: () => 'SHOCKING title from attribute' },
+                {
+                    textContent: '',
+                    getAttribute: () => 'SHOCKING title from attribute',
+                },
                 { textContent: '', getAttribute: () => null },
                 { textContent: '', getAttribute: () => undefined },
-                { textContent: 'Normal title', getAttribute: () => '' }
+                { textContent: 'Normal title', getAttribute: () => '' },
             ];
 
-            mockElements.forEach(el => {
+            mockElements.forEach((el) => {
                 expect(() => {
-                    const title = el.textContent?.trim() || el.getAttribute('title') || '';
+                    const title =
+                        el.textContent?.trim() ||
+                        el.getAttribute('title') ||
+                        '';
                     // Should not throw regardless of getAttribute result
                     expect(typeof title).toBe('string');
                 }).not.toThrow();
@@ -190,45 +216,60 @@ describe('Video Hiding Tests', () => {
                 {
                     name: 'container with title',
                     querySelector: (selector) => {
-                        if (selector.includes('video-title') || selector.includes('h3 a')) {
+                        if (
+                            selector.includes('video-title') ||
+                            selector.includes('h3 a')
+                        ) {
                             return { textContent: 'Valid video title' };
                         }
-                        if (selector.includes('img') || selector.includes('thumbnail')) {
+                        if (
+                            selector.includes('img') ||
+                            selector.includes('thumbnail')
+                        ) {
                             return { src: 'thumbnail.jpg' };
                         }
                         return null;
                     },
-                    shouldRemove: false
+                    shouldRemove: false,
                 },
                 {
                     name: 'broken container (has thumbnail, no title)',
                     querySelector: (selector) => {
-                        if (selector.includes('video-title') || selector.includes('h3 a')) {
+                        if (
+                            selector.includes('video-title') ||
+                            selector.includes('h3 a')
+                        ) {
                             return null; // No title
                         }
-                        if (selector.includes('img') || selector.includes('thumbnail')) {
+                        if (
+                            selector.includes('img') ||
+                            selector.includes('thumbnail')
+                        ) {
                             return { src: 'thumbnail.jpg' }; // Has thumbnail
                         }
                         return null;
                     },
-                    shouldRemove: true
+                    shouldRemove: true,
                 },
                 {
                     name: 'empty container (no thumbnail, no title)',
                     querySelector: (selector) => {
                         return null; // Nothing found
                     },
-                    shouldRemove: false // Don't remove empty containers without thumbnails
-                }
+                    shouldRemove: false, // Don't remove empty containers without thumbnails
+                },
             ];
 
-            mockContainers.forEach(container => {
-                const titleElement = container.querySelector('#video-title, a#video-title, h3 a, .title a');
+            mockContainers.forEach((container) => {
+                const titleElement = container.querySelector(
+                    '#video-title, a#video-title, h3 a, .title a'
+                );
                 const titleText = titleElement?.textContent?.trim() || '';
-                const hasThumbnail = !!container.querySelector('img, ytd-thumbnail');
-                
+                const hasThumbnail =
+                    !!container.querySelector('img, ytd-thumbnail');
+
                 const shouldRemove = !titleText && hasThumbnail;
-                
+
                 expect(shouldRemove).toBe(container.shouldRemove);
             });
         });

@@ -4,7 +4,7 @@
  * Queries the current tab for its blocked count and updates the UI display.
  * Sends a message to the content script to get the current blocked video count
  * and updates the popup display with the result.
- * 
+ *
  * @function updateBlockedCount
  * @returns {void}
  */
@@ -35,7 +35,7 @@ function updateBlockedCount() {
  * Loads saved settings from chrome.storage.sync and initializes the popup UI controls.
  * Sets the checkbox states based on stored user preferences and displays the initial blocked count.
  * This function is executed immediately when the popup loads.
- * 
+ *
  * @function initializePopup
  * @returns {void}
  */
@@ -49,10 +49,14 @@ chrome.storage.sync.get(
     },
     async (settings) => {
         document.getElementById('filter-enabled').checked = settings.enabled;
-        document.getElementById('filter-clickbait-words').checked = settings.filterClickbaitWords;
-        document.getElementById('filter-clickbait-phrases').checked = settings.filterClickbaitPhrases;
-        document.getElementById('filter-uppercase').checked = settings.filterUppercase;
-        document.getElementById('filter-punctuation').checked = settings.filterPunctuation;
+        document.getElementById('filter-clickbait-words').checked =
+            settings.filterClickbaitWords;
+        document.getElementById('filter-clickbait-phrases').checked =
+            settings.filterClickbaitPhrases;
+        document.getElementById('filter-uppercase').checked =
+            settings.filterUppercase;
+        document.getElementById('filter-punctuation').checked =
+            settings.filterPunctuation;
 
         // Update the icon based on the enabled state
         await updateIcon(settings.enabled);
@@ -65,7 +69,7 @@ chrome.storage.sync.get(
 /**
  * Updates the extension icon based on the enabled state.
  * Uses grey icons when disabled and regular icons when enabled.
- * 
+ *
  * @function updateIcon
  * @param {boolean} enabled - Whether the filter is enabled
  * @returns {Promise<void>}
@@ -75,32 +79,40 @@ function updateIcon(enabled) {
 
     return new Promise((resolve, reject) => {
         // Use the minimal approach - just the icon path as a string
-        const iconPath = enabled ? "icons/icon16.png" : "icons/grey/icon16.png";
+        const iconPath = enabled ? 'icons/icon16.png' : 'icons/grey/icon16.png';
 
         console.log('Setting icon path:', iconPath);
-        
+
         // Try the most basic approach first
         chrome.action.setIcon({ path: iconPath }, () => {
             if (chrome.runtime.lastError) {
-                console.error('Primary icon update failed:', chrome.runtime.lastError.message);
-                
+                console.error(
+                    'Primary icon update failed:',
+                    chrome.runtime.lastError.message
+                );
+
                 // Try with the full icon object instead
-                const fullIconPath = enabled ? {
-                    "16": "icons/icon16.png",
-                    "32": "icons/icon32.png",
-                    "48": "icons/icon48.png",
-                    "128": "icons/icon128.png"
-                } : {
-                    "16": "icons/grey/icon16.png",
-                    "32": "icons/grey/icon32.png",
-                    "48": "icons/grey/icon48.png",
-                    "128": "icons/grey/icon128.png"
-                };
-                
+                const fullIconPath = enabled
+                    ? {
+                          16: 'icons/icon16.png',
+                          32: 'icons/icon32.png',
+                          48: 'icons/icon48.png',
+                          128: 'icons/icon128.png',
+                      }
+                    : {
+                          16: 'icons/grey/icon16.png',
+                          32: 'icons/grey/icon32.png',
+                          48: 'icons/grey/icon48.png',
+                          128: 'icons/grey/icon128.png',
+                      };
+
                 console.log('Trying with full icon object:', fullIconPath);
                 chrome.action.setIcon({ path: fullIconPath }, () => {
                     if (chrome.runtime.lastError) {
-                        console.error('Full icon object also failed:', chrome.runtime.lastError.message);
+                        console.error(
+                            'Full icon object also failed:',
+                            chrome.runtime.lastError.message
+                        );
                         // Don't reject, just log the error and resolve
                         console.warn('Icon update failed, but continuing...');
                         resolve();
@@ -121,20 +133,24 @@ function updateIcon(enabled) {
  * Reads the current checkbox states, persists them to chrome.storage.sync,
  * and notifies the content script to apply the updated settings.
  * Also refreshes the blocked count display after settings are applied.
- * 
+ *
  * @async
  * @function saveSettings
  * @returns {Promise<void>}
  */
 async function saveSettings() {
     console.log('saveSettings called');
-    
+
     const settings = {
         enabled: document.getElementById('filter-enabled').checked,
-        filterClickbaitWords: document.getElementById('filter-clickbait-words').checked,
-        filterClickbaitPhrases: document.getElementById('filter-clickbait-phrases').checked,
+        filterClickbaitWords: document.getElementById('filter-clickbait-words')
+            .checked,
+        filterClickbaitPhrases: document.getElementById(
+            'filter-clickbait-phrases'
+        ).checked,
         filterUppercase: document.getElementById('filter-uppercase').checked,
-        filterPunctuation: document.getElementById('filter-punctuation').checked,
+        filterPunctuation:
+            document.getElementById('filter-punctuation').checked,
     };
 
     console.log('Settings to save:', settings);

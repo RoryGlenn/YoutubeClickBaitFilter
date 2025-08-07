@@ -6,7 +6,7 @@ import esbuild from 'esbuild';
 /**
  * Builds the Chrome extension by bundling the content script and copying necessary files.
  * Creates the dist directory, bundles filter.js with esbuild, and copies background.js.
- * 
+ *
  * @async
  * @function build
  * @returns {Promise<void>} Resolves when build completes successfully
@@ -33,35 +33,34 @@ async function build() {
         if (fs.existsSync('manifest.json')) {
             const manifestContent = fs.readFileSync('manifest.json', 'utf8');
             const manifest = JSON.parse(manifestContent);
-            
+
             // Fix paths for the dist folder
             if (manifest.background && manifest.background.service_worker) {
                 manifest.background.service_worker = 'background.js';
             }
             if (manifest.content_scripts) {
-                manifest.content_scripts.forEach(script => {
+                manifest.content_scripts.forEach((script) => {
                     if (script.js) {
-                        script.js = script.js.map(jsFile => 
+                        script.js = script.js.map((jsFile) =>
                             jsFile.replace('dist/', '')
                         );
                     }
                 });
             }
-            
-            fs.writeFileSync('dist/manifest.json', JSON.stringify(manifest, null, 2));
+
+            fs.writeFileSync(
+                'dist/manifest.json',
+                JSON.stringify(manifest, null, 2)
+            );
             console.log('Copied and fixed: manifest.json');
         } else {
             console.warn('Warning: manifest.json not found');
         }
 
         // Copy other essential files
-        const filesToCopy = [
-            'background.js',
-            'popup.html',
-            'popup.js',
-        ];
+        const filesToCopy = ['background.js', 'popup.html', 'popup.js'];
 
-        filesToCopy.forEach(file => {
+        filesToCopy.forEach((file) => {
             if (fs.existsSync(file)) {
                 fs.copyFileSync(file, `dist/${file}`);
                 console.log(`Copied: ${file}`);
@@ -77,19 +76,22 @@ async function build() {
             }
 
             const iconFiles = fs.readdirSync('icons');
-            iconFiles.forEach(iconFile => {
+            iconFiles.forEach((iconFile) => {
                 const sourcePath = `icons/${iconFile}`;
                 const destPath = `dist/icons/${iconFile}`;
-                
+
                 if (fs.statSync(sourcePath).isDirectory()) {
                     // Handle subdirectories (like grey folder)
                     if (!fs.existsSync(destPath)) {
                         fs.mkdirSync(destPath);
                     }
-                    
+
                     const subFiles = fs.readdirSync(sourcePath);
-                    subFiles.forEach(subFile => {
-                        fs.copyFileSync(`${sourcePath}/${subFile}`, `${destPath}/${subFile}`);
+                    subFiles.forEach((subFile) => {
+                        fs.copyFileSync(
+                            `${sourcePath}/${subFile}`,
+                            `${destPath}/${subFile}`
+                        );
                         console.log(`Copied icon: ${iconFile}/${subFile}`);
                     });
                 } else {
@@ -101,7 +103,7 @@ async function build() {
         } else {
             console.warn('Warning: icons directory not found');
         }
-        
+
         console.log('Build completed successfully!');
     } catch (error) {
         console.error('Build failed:', error);

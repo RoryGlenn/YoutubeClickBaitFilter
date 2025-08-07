@@ -13,35 +13,36 @@ async function updateBadge(count, tabId) {
             // Tab no longer exists, silently return
             return;
         }
-        
+
         // Set the badge text with better formatting
         await chrome.action.setBadgeText({
             text: count > 0 ? (count > 99 ? '99+' : count.toString()) : '',
-            tabId: tabId
+            tabId: tabId,
         });
-        
+
         // Set badge background color and styling for maximum visibility
         await chrome.action.setBadgeBackgroundColor({
             color: count > 10 ? '#FF0000' : '#FF6600', // Red for high counts, orange for lower
-            tabId: tabId
+            tabId: tabId,
         });
-        
+
         // Optional: Set badge text color (Chrome 110+)
         try {
             await chrome.action.setBadgeTextColor({
                 color: '#FFFFFF', // White text for contrast
-                tabId: tabId
+                tabId: tabId,
             });
         } catch (error) {
             // Ignore if setBadgeTextColor is not supported
         }
-        
+
         // Update tooltip with more detailed info
         await chrome.action.setTitle({
-            title: count > 0 
-                ? `YouTube ClickBait Filter - ${count} videos blocked on this page`
-                : 'YouTube ClickBait Filter - No videos blocked',
-            tabId: tabId
+            title:
+                count > 0
+                    ? `YouTube ClickBait Filter - ${count} videos blocked on this page`
+                    : 'YouTube ClickBait Filter - No videos blocked',
+            tabId: tabId,
         });
     } catch (error) {
         // Silently ignore errors for non-existent tabs
@@ -58,12 +59,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     try {
         if (message.type === 'updateBadge' && sender.tab) {
             updateBadge(message.count, sender.tab.id);
-            sendResponse({success: true});
+            sendResponse({ success: true });
             return true; // Keep the message channel open
         }
     } catch (error) {
         console.error('Error handling message:', error);
-        sendResponse({error: error.message});
+        sendResponse({ error: error.message });
     }
 });
 
@@ -72,13 +73,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
  */
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     try {
-        if (changeInfo.status === 'complete' && tab.url && !tab.url.includes('youtube.com')) {
+        if (
+            changeInfo.status === 'complete' &&
+            tab.url &&
+            !tab.url.includes('youtube.com')
+        ) {
             // Check if tab still exists before clearing badge
             const tabExists = await chrome.tabs.get(tabId).catch(() => null);
             if (tabExists) {
                 await chrome.action.setBadgeText({
                     text: '',
-                    tabId: tabId
+                    tabId: tabId,
                 });
             }
         }
