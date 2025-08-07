@@ -50,11 +50,11 @@ http-server
    - Node.js: `http://localhost:8080/integration-tests/youtube-html-test.html`
    - Live Server: Will open automatically
 
-2. Click **"🔬 Load Complex Sample HTML"** to load realistic test data
+3. Click **"🔬 Load Complex Sample HTML"** to load realistic test data
 
-3. Click **"🔍 Test Filtering"** to run the analysis
+4. Click **"🔍 Test Filtering"** to run the analysis
 
-4. Review the results:
+5. Review the results:
    - **Stats summary** shows how many videos would be filtered vs kept
    - **Visual results** show each video with colored borders (red = filtered, green = kept)
    - **Full log** (click "📜 Show Full Log") provides detailed analysis of each decision
@@ -65,15 +65,15 @@ http-server
 
 2. Open the test page in your browser using the appropriate localhost URL
 
-2. Go to YouTube in another tab and navigate to any video page with recommended videos in the sidebar
+3. Go to YouTube in another tab and navigate to any video page with recommended videos in the sidebar
 
-3. Right-click on the YouTube page and select **"View Page Source"** (or press `Ctrl+U` / `Cmd+U`)
+4. Right-click on the YouTube page and select **"View Page Source"** (or press `Ctrl+U` / `Cmd+U`)
 
-4. Copy sections containing video recommendations (or copy the entire source)
+5. Copy sections containing video recommendations (or copy the entire source)
 
-5. Paste the HTML into the textarea in the test interface
+6. Paste the HTML into the textarea in the test interface
 
-6. Click **"🔍 Test Filtering"** to analyze real YouTube content
+7. Click **"🔍 Test Filtering"** to analyze real YouTube content
 
 ## Understanding the Results
 
