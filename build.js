@@ -29,9 +29,33 @@ async function build() {
             outfile: 'dist/filter.bundle.js',
         });
 
-        // Copy essential files
+        // Copy and fix manifest.json
+        if (fs.existsSync('manifest.json')) {
+            const manifestContent = fs.readFileSync('manifest.json', 'utf8');
+            const manifest = JSON.parse(manifestContent);
+            
+            // Fix paths for the dist folder
+            if (manifest.background && manifest.background.service_worker) {
+                manifest.background.service_worker = 'background.js';
+            }
+            if (manifest.content_scripts) {
+                manifest.content_scripts.forEach(script => {
+                    if (script.js) {
+                        script.js = script.js.map(jsFile => 
+                            jsFile.replace('dist/', '')
+                        );
+                    }
+                });
+            }
+            
+            fs.writeFileSync('dist/manifest.json', JSON.stringify(manifest, null, 2));
+            console.log('Copied and fixed: manifest.json');
+        } else {
+            console.warn('Warning: manifest.json not found');
+        }
+
+        // Copy other essential files
         const filesToCopy = [
-            'manifest.json',
             'background.js',
             'popup.html',
             'popup.js',
@@ -54,8 +78,25 @@ async function build() {
 
             const iconFiles = fs.readdirSync('icons');
             iconFiles.forEach(iconFile => {
-                fs.copyFileSync(`icons/${iconFile}`, `dist/icons/${iconFile}`);
-                console.log(`Copied icon: ${iconFile}`);
+                const sourcePath = `icons/${iconFile}`;
+                const destPath = `dist/icons/${iconFile}`;
+                
+                if (fs.statSync(sourcePath).isDirectory()) {
+                    // Handle subdirectories (like grey folder)
+                    if (!fs.existsSync(destPath)) {
+                        fs.mkdirSync(destPath);
+                    }
+                    
+                    const subFiles = fs.readdirSync(sourcePath);
+                    subFiles.forEach(subFile => {
+                        fs.copyFileSync(`${sourcePath}/${subFile}`, `${destPath}/${subFile}`);
+                        console.log(`Copied icon: ${iconFile}/${subFile}`);
+                    });
+                } else {
+                    // Handle regular files
+                    fs.copyFileSync(sourcePath, destPath);
+                    console.log(`Copied icon: ${iconFile}`);
+                }
             });
         } else {
             console.warn('Warning: icons directory not found');
