@@ -1,6 +1,6 @@
-# YouTube ClickBait Filter - Detailed Documentation
+# User Guide - YouTube ClickBait Filter
 
-A powerful Chrome extension that intelligently filters out negative, crisis-related, and clickbait content on YouTube. Features a modern dark-themed interface with real-time badge notifications and per-page filtering statistics.
+Complete user guide for the YouTube ClickBait Filter Chrome extension. This guide covers detailed features, installation methods, configuration options, and troubleshooting.
 
 ## ✨ Features Overview
 
