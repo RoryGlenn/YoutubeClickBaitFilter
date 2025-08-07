@@ -1,9 +1,31 @@
 {
 	"name": "youtube-clickbait-filter",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"description": "A powerful Chrome extension that intelligently filters out clickbait, negative, and crisis-related content from YouTube to improve your viewing experience.",
+	"main": "src/content/filter.js",
 	"type": "module",
+	"keywords": [
+		"chrome-extension",
+		"youtube",
+		"clickbait",
+		"filter",
+		"content-filter",
+		"browser-extension",
+		"manifest-v3"
+	],
+	"author": {
+		"name": "Rory Glenn",
+		"url": "https://github.com/RoryGlenn"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/RoryGlenn/YoutubeClickBaitFilter.git"
+	},
+	"bugs": {
+		"url": "https://github.com/RoryGlenn/YoutubeClickBaitFilter/issues"
+	},
+	"homepage": "https://github.com/RoryGlenn/YoutubeClickBaitFilter#readme",
+	"license": "MIT",
 	"scripts": {
 		"build": "node scripts/build.js",
 		"format": "prettier --write \"**/*.{js,css,html}\"",
