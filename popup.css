@@ -1,0 +1,79 @@
+html {
+    background-color: #2d2d2d;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 250px;
+    padding: 0;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+.container {
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid #333;
+}
+
+.header {
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.count {
+    margin-bottom: 12px;
+    text-align: center;
+    color: #ff6b35;
+    font-weight: 500;
+}
+
+.setting {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.setting input[type='checkbox'] {
+    margin-right: 8px;
+    accent-color: #ff6b35;
+    width: 16px;
+    height: 16px;
+}
+
+.setting label {
+    cursor: pointer;
+    flex: 1;
+    color: #e0e0e0;
+    transition: color 0.2s ease;
+}
+
+.setting label:hover {
+    color: #ffffff;
+}
+
+.main-toggle {
+    border-bottom: 1px solid #333;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.main-toggle label {
+    font-weight: bold;
+    color: #ffffff;
+}
+
+/* Custom checkbox styling for better dark theme integration */
+.setting input[type='checkbox']:checked {
+    background-color: #ff6b35;
+}

@@ -1,109 +1,62 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <style>
-        html {
-            background-color: #2d2d2d;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            width: 250px;
-            padding: 0;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            background-color: #2d2d2d;
-            color: #e0e0e0;
-        }
-        .container {
-            background-color: #1a1a1a;
-            border-radius: 12px;
-            padding: 15px;
-            margin: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            border: 1px solid #333;
-        }
-        .header {
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-align: center;
-            color: #ffffff;
-            font-size: 16px;
-        }
-        .count {
-            margin-bottom: 12px;
-            text-align: center;
-            color: #ff6b35;
-            font-weight: 500;
-        }
-        .setting {
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-        }
-        .setting input[type="checkbox"] {
-            margin-right: 8px;
-            accent-color: #ff6b35;
-            width: 16px;
-            height: 16px;
-        }
-        .setting label {
-            cursor: pointer;
-            flex: 1;
-            color: #e0e0e0;
-            transition: color 0.2s ease;
-        }
-        .setting label:hover {
-            color: #ffffff;
-        }
-        .main-toggle {
-            border-bottom: 1px solid #333;
-            padding-bottom: 12px;
-            margin-bottom: 12px;
-        }
-        .main-toggle label {
-            font-weight: bold;
-            color: #ffffff;
-        }
-        /* Custom checkbox styling for better dark theme integration */
-        .setting input[type="checkbox"]:checked {
-            background-color: #ff6b35;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">YouTube ClickBait Filter</div>
-        <div class="count">Blocked videos: <span id="blocked-count">0</span></div>
-        
-        <div class="setting main-toggle">
-            <input type="checkbox" id="filter-enabled">
-            <label for="filter-enabled" title="Enable or disable the entire YouTube clickbait filter">Enable Filter</label>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="popup.css" />
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">YouTube ClickBait Filter</div>
+            <div class="count">
+                Blocked videos: <span id="blocked-count">0</span>
+            </div>
+
+            <div class="setting main-toggle">
+                <input type="checkbox" id="filter-enabled" />
+                <label
+                    for="filter-enabled"
+                    title="Enable or disable the entire YouTube clickbait filter"
+                    >On</label
+                >
+            </div>
+
+            <div class="setting">
+                <input type="checkbox" id="filter-clickbait-words" />
+                <label
+                    for="filter-clickbait-words"
+                    title="Filter videos with clickbait words like 'shocking', 'unprecedented' and 'urgent'"
+                    >Clickbait Words</label
+                >
+            </div>
+
+            <div class="setting">
+                <input type="checkbox" id="filter-clickbait-phrases" />
+                <label
+                    for="filter-clickbait-phrases"
+                    title="Filter videos with clickbait phrases like 'You Won't Believe'"
+                    >Clickbait Phrases</label
+                >
+            </div>
+
+            <div class="setting">
+                <input type="checkbox" id="filter-uppercase" />
+                <label
+                    for="filter-uppercase"
+                    title="Filter videos with 3+ uppercase words"
+                    >Excessive CAPS</label
+                >
+            </div>
+
+            <div class="setting">
+                <input type="checkbox" id="filter-punctuation" />
+                <label
+                    for="filter-punctuation"
+                    title="Filter videos with 3+ exclamation/question marks in a row"
+                    >Excessive !!! or ???</label
+                >
+            </div>
         </div>
-        
-        <div class="setting">
-            <input type="checkbox" id="filter-clickbait-words">
-            <label for="filter-clickbait-words" title="Filter videos with clickbait words like 'shocking', 'unprecedented' and 'urgent'">Clickbait Words</label>
-        </div>
-        
-        <div class="setting">
-            <input type="checkbox" id="filter-clickbait-phrases">
-            <label for="filter-clickbait-phrases" title="Filter videos with clickbait phrases like 'You Won't Believe'">Clickbait Phrases</label>
-        </div>
-        
-        <div class="setting">
-            <input type="checkbox" id="filter-uppercase">
-            <label for="filter-uppercase" title="Filter videos with 3+ uppercase words">Excessive CAPS</label>
-        </div>
-        
-        <div class="setting">
-            <input type="checkbox" id="filter-punctuation">
-            <label for="filter-punctuation" title="Filter videos with 3+ exclamation/question marks in a row">Excessive !!! or ???</label>
-        </div>
-    </div>
-    
-    <script src="popup.js"></script>
-</body>
+
+        <script src="popup.js"></script>
+    </body>
 </html>

@@ -6,8 +6,8 @@
 	"type": "module",
 	"scripts": {
 		"build": "node build.js",
-		"format": "prettier --write \"**/*.js\"",
-		"format:check": "prettier --check \"**/*.js\"",
+		"format": "prettier --write \"**/*.{js,css,html}\"",
+		"format:check": "prettier --check \"**/*.{js,css,html}\"",
 		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
 		"test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
 		"test:constants": "node --experimental-vm-modules node_modules/jest/bin/jest.js constants.test.js",

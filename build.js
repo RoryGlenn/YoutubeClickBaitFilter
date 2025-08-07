@@ -58,7 +58,12 @@ async function build() {
         }
 
         // Copy other essential files
-        const filesToCopy = ['background.js', 'popup.html', 'popup.js'];
+        const filesToCopy = [
+            'background.js',
+            'popup.html',
+            'popup.js',
+            'popup.css',
+        ];
 
         filesToCopy.forEach((file) => {
             if (fs.existsSync(file)) {
