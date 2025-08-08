@@ -75,19 +75,13 @@ chrome.storage.sync.get(
  * @returns {Promise<void>}
  */
 function updateIcon(enabled) {
-    console.log('updateIcon called with enabled:', enabled);
-
     return new Promise((resolve, reject) => {
         // Use the minimal approach - just the icon path as a string
         const iconPath = enabled ? 'icons/icon16.png' : 'icons/grey/icon16.png';
 
-        console.log('Setting icon path:', iconPath);
-
         // Try the most basic approach first
         chrome.action.setIcon({ path: iconPath }, () => {
             if (chrome.runtime.lastError) {
-                console.error(
-                    'Primary icon update failed:',
                     chrome.runtime.lastError.message
                 );
 
@@ -106,23 +100,15 @@ function updateIcon(enabled) {
                           128: 'icons/grey/icon128.png',
                       };
 
-                console.log('Trying with full icon object:', fullIconPath);
                 chrome.action.setIcon({ path: fullIconPath }, () => {
                     if (chrome.runtime.lastError) {
-                        console.error(
-                            'Full icon object also failed:',
-                            chrome.runtime.lastError.message
-                        );
-                        // Don't reject, just log the error and resolve
-                        console.warn('Icon update failed, but continuing...');
+                        // Don't reject, just resolve to continue
                         resolve();
                     } else {
-                        console.log('Full icon object update successful');
                         resolve();
                     }
                 });
             } else {
-                console.log('Icon updated successfully');
                 resolve();
             }
         });
@@ -139,8 +125,6 @@ function updateIcon(enabled) {
  * @returns {Promise<void>}
  */
 async function saveSettings() {
-    console.log('saveSettings called');
-
     const settings = {
         enabled: document.getElementById('filter-enabled').checked,
         filterClickbaitWords: document.getElementById('filter-clickbait-words')
@@ -152,8 +136,6 @@ async function saveSettings() {
         filterPunctuation:
             document.getElementById('filter-punctuation').checked,
     };
-
-    console.log('Settings to save:', settings);
 
     // Update the icon based on enabled state
     await updateIcon(settings.enabled);

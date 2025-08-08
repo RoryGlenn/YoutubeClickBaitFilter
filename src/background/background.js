@@ -46,9 +46,7 @@ async function updateBadge(count, tabId) {
         });
     } catch (error) {
         // Silently ignore errors for non-existent tabs
-        if (!error.message.includes('No tab with id')) {
-            console.error('Failed to update badge:', error);
-        }
+        // (no console logging for production)
     }
 }
 
@@ -63,7 +61,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             return true; // Keep the message channel open
         }
     } catch (error) {
-        console.error('Error handling message:', error);
         sendResponse({ error: error.message });
     }
 });
@@ -89,9 +86,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         }
     } catch (error) {
         // Silently ignore errors for non-existent tabs
-        if (!error.message.includes('No tab with id')) {
-            console.error('Error clearing badge on navigation:', error);
-        }
+        // (no console logging for production)
     }
 });
 
@@ -103,6 +98,6 @@ chrome.tabs.onRemoved.addListener(async (tabId) => {
         // No need to clear badge for removed tabs as they're already gone
         // This listener is mainly for cleanup if needed
     } catch (error) {
-        console.error('Error in tab removal handler:', error);
+        // Silently handle errors
     }
 });

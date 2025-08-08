@@ -49,7 +49,6 @@ function loadSettings() {
                 resolve();
             });
         } catch (error) {
-            console.error('Failed to load settings:', error);
             resolve(); // Resolve anyway to continue with defaults
         }
     });
@@ -89,13 +88,6 @@ function updateBadge() {
 function checkUrlChange() {
     const newUrl = window.location.href;
     if (newUrl !== currentUrl) {
-        console.log(
-            'URL changed from',
-            currentUrl,
-            'to',
-            newUrl,
-            '- resetting counter'
-        );
         currentUrl = newUrl;
         blockedCount = 0;
         updateBadge(); // Update badge when counter resets
@@ -131,9 +123,6 @@ function filterStandardCards() {
     ];
 
     const allContainers = document.querySelectorAll(videoSelectors.join(', '));
-    console.log(
-        `Checking ${allContainers.length} video containers (including new YouTube structure)`
-    );
 
     allContainers.forEach((card, index) => {
         try {
@@ -174,9 +163,6 @@ function filterStandardCards() {
                         titleElement.getAttribute('title')?.trim() ||
                         '';
                     if (title) {
-                        console.log(
-                            `Found title via selector "${selector}": "${title}"`
-                        );
                         break;
                     }
                 }
@@ -188,35 +174,20 @@ function filterStandardCards() {
                     card.getAttribute('aria-label')?.trim() ||
                     card.getAttribute('title')?.trim() ||
                     '';
-                if (title) {
-                    console.log(
-                        `Found title via container attribute: "${title}"`
-                    );
-                }
             }
 
             if (title) {
-                console.log(
-                    `Container ${index + 1} (${card.tagName || card.className}): "${title}"`
-                );
                 if (shouldFilter(title)) {
-                    console.log('✓ Filtering video with title:', title);
                     card.style.display = 'none'; // Hide first
                     card.remove(); // Then remove
                     blockedCount++;
-                } else {
-                    console.log('✗ Keeping video with title:', title);
                 }
             } else {
-                console.log(
-                    `⚠ Container ${index + 1} (${card.tagName || card.className}): No title found`
-                );
                 // Log a snippet of the HTML to help debug
                 const htmlSnippet = card.outerHTML?.substring(0, 200) + '...';
-                console.log('HTML snippet:', htmlSnippet);
             }
         } catch (error) {
-            console.warn('Error processing video card:', error);
+            // Error processing video card
         }
     });
 }
@@ -229,7 +200,6 @@ function filterAriaLabels() {
         try {
             const label = el.getAttribute('aria-label')?.trim();
             if (label && shouldFilter(label)) {
-                console.log('Filtering aria-label element:', label);
 
                 // Find the appropriate container to remove - be more specific
                 const wrapper =
@@ -253,14 +223,10 @@ function filterAriaLabels() {
                 } else {
                     // Fallback: just hide the element itself if we can't find a video container
                     // This prevents removing entire sections
-                    console.log(
-                        'Could not find specific video container, skipping removal for:',
-                        label
-                    );
                 }
             }
         } catch (error) {
-            console.warn('Error processing aria-label element:', error);
+            // Error processing aria-label element
         }
     });
 }
@@ -328,10 +294,6 @@ function filterNewLayouts() {
                                 '';
 
                             if (title && shouldFilter(title)) {
-                                console.log(
-                                    'Filtering new layout container with title:',
-                                    title
-                                );
 
                                 targetContainer.style.display = 'none'; // Hide first
                                 targetContainer.remove(); // Then remove
@@ -341,15 +303,12 @@ function filterNewLayouts() {
                         }
                     }
                 } catch (error) {
-                    console.warn(
-                        'Error processing new layout container:',
-                        error
-                    );
+                    // Error processing new layout container
                 }
             });
         });
     } catch (error) {
-        console.warn('Error in filterNewLayouts:', error);
+        // Error in filterNewLayouts
     }
 }
 
@@ -357,12 +316,10 @@ function filterNewLayouts() {
  * Additional selective filtering for any remaining video elements
  */
 function filterRemainingVideos() {
-    console.log('Running final filtering pass...');
 
     try {
         // Target any links to watch pages that might have escaped other filters
         const watchLinks = document.querySelectorAll('a[href*="/watch"]');
-        console.log(`Checking ${watchLinks.length} watch links`);
 
         watchLinks.forEach((link) => {
             try {
@@ -373,9 +330,7 @@ function filterRemainingVideos() {
                     '';
 
                 if (title) {
-                    console.log('Checking watch link title:', title);
                     if (shouldFilter(title)) {
-                        console.log('✓ Filtering remaining video link:', title);
 
                         // Find the video container - be more specific about what we remove
                         const videoContainer =
@@ -385,10 +340,6 @@ function filterRemainingVideos() {
                             link.closest('ytd-compact-video-renderer');
 
                         if (videoContainer) {
-                            console.log(
-                                '✓ Removing container:',
-                                videoContainer.tagName
-                            );
                             videoContainer.style.display = 'none';
                             videoContainer.remove();
                             blockedCount++;
@@ -400,34 +351,24 @@ function filterRemainingVideos() {
                                 link.closest('[data-video-id]');
 
                             if (fallbackContainer) {
-                                console.log(
-                                    '✓ Removing fallback container:',
-                                    fallbackContainer.tagName
-                                );
                                 fallbackContainer.style.display = 'none';
                                 fallbackContainer.remove();
                                 blockedCount++;
                             } else {
-                                console.log('✓ Removing link directly');
                                 link.style.display = 'none';
                                 link.remove();
                             }
                         }
-                    } else {
-                        console.log('✗ Keeping watch link:', title);
                     }
                 }
             } catch (error) {
-                console.warn('Error processing video link:', error);
+                // Error processing video link
             }
         });
 
         // Additional pass: look for broken video containers, but be more selective
         const allContainers = document.querySelectorAll(
             'ytd-compact-video-renderer, ytd-video-renderer, ytd-rich-item-renderer, ytd-grid-video-renderer'
-        );
-        console.log(
-            `Checking ${allContainers.length} containers for broken state`
         );
 
         allContainers.forEach((container) => {
@@ -445,22 +386,16 @@ function filterRemainingVideos() {
                         'img[src], ytd-thumbnail, [class*="thumbnail"]'
                     )
                 ) {
-                    console.log(
-                        '✓ Removing video container with missing title (likely filtered)'
-                    );
                     container.style.display = 'none';
                     container.remove();
                     blockedCount++;
                 }
             } catch (error) {
-                console.warn(
-                    'Error checking for broken video containers:',
-                    error
-                );
+                // Error checking for broken video containers
             }
         });
     } catch (error) {
-        console.warn('Error in filterRemainingVideos:', error);
+        // Error in filterRemainingVideos
     }
 }
 
@@ -485,8 +420,6 @@ function runFilter() {
     if (blockedCount !== previousCount) {
         updateBadge();
     }
-
-    console.log('runFilter - blockedCount for current page:', blockedCount);
 }
 
 /**
@@ -515,7 +448,6 @@ function registerMessageHandlers() {
                 sendResponse({ blockedCount });
             }
         } catch (error) {
-            console.error('Error handling message:', error);
             sendResponse({ error: error.message });
         }
     });
@@ -568,10 +500,6 @@ export function hasThreeOrMoreMarks(title) {
 // Initialization sequence (only run if not being imported as module)
 if (typeof window !== 'undefined' && window.location) {
     (async function init() {
-        console.log(
-            'YouTube ClickBait Filter initialized for page:',
-            currentUrl
-        );
         await loadSettings();
         runFilter();
         setupObserver();
