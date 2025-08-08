@@ -200,7 +200,6 @@ function filterAriaLabels() {
         try {
             const label = el.getAttribute('aria-label')?.trim();
             if (label && shouldFilter(label)) {
-
                 // Find the appropriate container to remove - be more specific
                 const wrapper =
                     el.closest('ytd-rich-item-renderer') ||
@@ -294,7 +293,6 @@ function filterNewLayouts() {
                                 '';
 
                             if (title && shouldFilter(title)) {
-
                                 targetContainer.style.display = 'none'; // Hide first
                                 targetContainer.remove(); // Then remove
                                 blockedCount++;
@@ -316,7 +314,6 @@ function filterNewLayouts() {
  * Additional selective filtering for any remaining video elements
  */
 function filterRemainingVideos() {
-
     try {
         // Target any links to watch pages that might have escaped other filters
         const watchLinks = document.querySelectorAll('a[href*="/watch"]');
@@ -331,7 +328,6 @@ function filterRemainingVideos() {
 
                 if (title) {
                     if (shouldFilter(title)) {
-
                         // Find the video container - be more specific about what we remove
                         const videoContainer =
                             link.closest('ytd-video-renderer') ||
