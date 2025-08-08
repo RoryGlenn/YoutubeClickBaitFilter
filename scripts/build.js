@@ -86,6 +86,11 @@ async function build() {
 
             const iconFiles = fs.readdirSync('assets/icons');
             iconFiles.forEach((iconFile) => {
+                // Skip system files like .DS_Store
+                if (iconFile.startsWith('.')) {
+                    return;
+                }
+
                 const sourcePath = `assets/icons/${iconFile}`;
                 const destPath = `dist/icons/${iconFile}`;
 
@@ -97,6 +102,10 @@ async function build() {
 
                     const subFiles = fs.readdirSync(sourcePath);
                     subFiles.forEach((subFile) => {
+                        // Skip system files in subdirectories too
+                        if (subFile.startsWith('.')) {
+                            return;
+                        }
                         fs.copyFileSync(
                             `${sourcePath}/${subFile}`,
                             `${destPath}/${subFile}`

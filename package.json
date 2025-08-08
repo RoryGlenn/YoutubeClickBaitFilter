@@ -28,6 +28,7 @@
 	"license": "MIT",
 	"scripts": {
 		"build": "node scripts/build.js",
+		"package": "npm run build && cd dist && zip -r ../youtube-clickbait-filter-v$(node -p \"require('../package.json').version\").zip . -x '*.DS_Store' && cd .. && echo 'Package created: youtube-clickbait-filter-v'$(node -p \"require('./package.json').version\")'.zip'",
 		"format": "prettier --write \"**/*.{js,css,html}\"",
 		"format:check": "prettier --check \"**/*.{js,css,html}\"",
 		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
