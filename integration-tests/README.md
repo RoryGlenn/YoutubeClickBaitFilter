@@ -5,7 +5,9 @@ This directory contains integration tests for the YouTube ClickBait Filter exten
 ## Files Overview
 
 - **`youtube-html-test.html`** - Interactive web interface for testing the filter logic
-- **`test-logic.js`** - JavaScript module containing the testing functionality
+- **`youtube-html-test.css`** - Styling for the test interface (extracted for maintainability)
+- **`youtube-html-test.js`** - UI JavaScript functions (extracted for better organization)
+- **`test-logic.js`** - Core testing functionality and filter logic integration
 - **`complex-sample.html`** - Sample YouTube HTML with 20+ realistic video structures
 
 ## Quick Start
@@ -36,10 +38,16 @@ http-server
 # Then open: http://localhost:8080/integration-tests/youtube-html-test.html
 ```
 
-**Option C: VS Code Live Server Extension**
+**Option C: VS Code Live Server Extension (Recommended)**
 1. Install the "Live Server" extension in VS Code
 2. Right-click on `youtube-html-test.html` in VS Code
 3. Select "Open with Live Server"
+4. Test page opens automatically in your default browser
+
+**Option D: VS Code Preview (Alternative)**
+1. Open the workspace in VS Code
+2. Install the "Live Preview" extension
+3. Right-click `youtube-html-test.html` and select "Show Preview"
 
 ### Method 1: Use Pre-loaded Samples (Recommended for First Time)
 
@@ -58,6 +66,25 @@ http-server
    - **Stats summary** shows how many videos would be filtered vs kept
    - **Visual results** show each video with colored borders (red = filtered, green = kept)
    - **Full log** (click "📜 Show Full Log") provides detailed analysis of each decision
+
+### Understanding the File Structure
+
+The test interface uses a clean separation of concerns:
+
+```
+integration-tests/
+├── youtube-html-test.html    # Clean HTML structure 
+├── youtube-html-test.css     # All styling (extracted from HTML)
+├── youtube-html-test.js      # UI functions (extracted from HTML)
+├── test-logic.js            # Core test logic and filter integration
+└── complex-sample.html      # Sample data for testing
+```
+
+**Benefits of this structure:**
+- **Maintainability**: CSS and JavaScript are separate from HTML
+- **Debugging**: External files are easier to debug in browser dev tools
+- **Performance**: External files can be cached by the browser
+- **Organization**: Clear separation between structure, style, and behavior
 
 ### Method 2: Test with Real YouTube Content
 
@@ -148,6 +175,13 @@ Common solutions:
 - **Use a local server**: Direct file access (`file://`) blocks module imports
 - **Check file paths**: Ensure the main extension files are in the correct locations
 - **Modern browser**: Older browsers don't support ES6 modules
+- **Clean file structure**: Recent updates separated CSS/JS from HTML for better organization
+
+### Browser Compatibility
+- **Chrome**: Full support (recommended for testing Chrome extension)
+- **Firefox**: Full support with ES6 modules
+- **Safari**: Full support (macOS 12+)
+- **Edge**: Full support (Chromium-based versions)
 
 ## Customizing Tests
 
@@ -171,19 +205,34 @@ function showSampleHTML() {
 }
 ```
 
-### Modifying Filter Settings
-The tests use these default settings (same as the extension):
+### Modifying the Test Interface
+The test interface files can be customized:
+
+**Styling Changes** (`youtube-html-test.css`):
+```css
+/* Modify colors, layout, or add new visual elements */
+.filtered-video {
+    border: 3px solid #your-color !important;
+}
+```
+
+**UI Functionality** (`youtube-html-test.js`):
 ```javascript
+// Add new UI functions or modify existing ones
+function toggleLogView() {
+    // Your custom toggle logic
+}
+```
+
+**Core Testing Logic** (`test-logic.js`):
+```javascript
+// Modify filter settings or add new test scenarios
 const userSettings = {
     enabled: true,
     filterClickbaitWords: true,
-    filterClickbaitPhrases: true,
-    filterUppercase: true,
-    filterPunctuation: true,
+    // Add your custom settings
 };
 ```
-
-You can modify these in `test-logic.js` to test different filtering configurations.
 
 ## Best Practices
 
