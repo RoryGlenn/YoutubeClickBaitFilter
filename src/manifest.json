@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "YouTube ClickBait Filter",
   "version": "1.0.0",
-  "description": "A powerful Chrome extension that intelligently filters out clickbait, negative, and crisis-related content from YouTube to improve your viewing experience.",
+  "description": "Intelligently filters clickbait, negative, and crisis-related content from YouTube for a cleaner viewing experience.",
   "author": "Rory Glenn",
   "homepage_url": "https://github.com/RoryGlenn/YoutubeClickBaitFilter",
 
