@@ -276,6 +276,7 @@ export const CLICKBAIT_PHRASES = [
     'one thing',
     'one trick for',
     'one trick to',
+    'one weird',
     'only 1 percent of people',
     'only 1% of people',
     'only way to',
