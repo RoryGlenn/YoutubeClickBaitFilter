@@ -82,9 +82,6 @@ function updateIcon(enabled) {
         // Try the most basic approach first
         chrome.action.setIcon({ path: iconPath }, () => {
             if (chrome.runtime.lastError) {
-                    chrome.runtime.lastError.message
-                );
-
                 // Try with the full icon object instead
                 const fullIconPath = enabled
                     ? {
