@@ -279,6 +279,7 @@ export const CLICKBAIT_PHRASES = [
     'only 1 percent of people',
     'only 1% of people',
     'only way to',
+    'out of control',
     'point of view:',
     'prepare to be amazed',
     'read before',
