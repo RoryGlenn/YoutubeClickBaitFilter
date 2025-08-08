@@ -5,7 +5,15 @@ import esbuild from 'esbuild';
 
 /**
  * Builds the Chrome extension by bundling the content script and copying necessary files.
- * Creates the dist directory, bundles filter.js with esbuild, and copies background.js.
+ * Creates the dist directory, bundles filter.js with esbuild, copies all extension files,
+ * and prepares the extension for Chrome Web Store submission.
+ *
+ * Build process includes:
+ * - Bundle and minify content script (filter.js) using esbuild
+ * - Copy and fix manifest.json paths for distribution
+ * - Copy background script, popup files, and CSS
+ * - Copy all icon assets (excluding system files like .DS_Store)
+ * - Create clean dist/ directory ready for packaging
  *
  * @async
  * @function build

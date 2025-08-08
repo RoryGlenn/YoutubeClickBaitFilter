@@ -1,12 +1,37 @@
+/**
+ * @fileoverview YouTube ClickBait Filter - Filtering Constants
+ * Comprehensive lists of keywords and phrases used for content filtering.
+ * 
+ * This module exports arrays of clickbait words and phrases that are commonly
+ * used in sensationalized YouTube titles. These constants are used by the
+ * filtering algorithm to identify and remove clickbait content from user feeds.
+ * 
+ * Categories include:
+ * - Alarmist and crisis language
+ * - Sensationalized descriptors
+ * - Emotional manipulation terms
+ * - Exaggerated claims and superlatives
+ * - Common clickbait phrases and patterns
+ * 
+ * @author Rory Glenn
+ * @version 1.0.0
+ * @since 2025-08-08
+ */
+
 // constants.js
 
 /**
- * @fileoverview Lists of keywords used for filtering out unwanted content.
- */
-
-/**
- * Words indicating negative or alarming content.
+ * Array of words indicating negative, alarming, or sensationalized content.
+ * These words are commonly used in clickbait titles to create urgency,
+ * fear, or emotional responses. Titles containing these words may be
+ * filtered based on user preferences.
+ * 
  * @type {string[]}
+ * @example
+ * // Check if title contains clickbait words
+ * const hasClickbait = CLICKBAIT_WORDS.some(word => 
+ *   title.toLowerCase().includes(word)
+ * );
  */
 export const CLICKBAIT_WORDS = [
     'actually',
@@ -87,8 +112,16 @@ export const CLICKBAIT_WORDS = [
 ];
 
 /**
- * Common clickbait phrases to identify sensational headlines.
+ * Array of common clickbait phrases used to identify sensational headlines.
+ * These phrases are frequently used in manipulative content designed to
+ * generate clicks through curiosity gaps, false promises, or exaggerated claims.
+ * 
  * @type {string[]}
+ * @example
+ * // Check if title contains clickbait phrases
+ * const hasClickbaitPhrase = CLICKBAIT_PHRASES.some(phrase => 
+ *   title.toLowerCase().includes(phrase)
+ * );
  */
 export const CLICKBAIT_PHRASES = [
     '1 simple trick',

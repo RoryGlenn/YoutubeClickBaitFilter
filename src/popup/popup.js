@@ -1,12 +1,35 @@
+/**
+ * @fileoverview YouTube ClickBait Filter - Popup Interface
+ * Popup script that manages the extension's user interface and settings.
+ * 
+ * This script handles the popup window that appears when users click the extension icon.
+ * It provides controls for enabling/disabling filters, displays blocked video counts,
+ * and manages user preferences with real-time updates to the content script.
+ * 
+ * Features:
+ * - Real-time blocked count display
+ * - Filter toggle controls (clickbait words, phrases, uppercase, punctuation)
+ * - Settings persistence via Chrome storage sync
+ * - Dynamic icon updates based on enabled state
+ * - Immediate settings application to active tabs
+ * 
+ * @author Rory Glenn
+ * @version 1.0.0
+ * @since 2025-08-08
+ */
+
 // popup.js
 
 /**
  * Queries the current tab for its blocked count and updates the UI display.
  * Sends a message to the content script to get the current blocked video count
- * and updates the popup display with the result.
+ * and updates the popup display with the result. Handles cases where the content
+ * script might not be ready or available.
  *
  * @function updateBlockedCount
  * @returns {void}
+ * @example
+ * updateBlockedCount(); // Updates the #blocked-count element with current count
  */
 function updateBlockedCount() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {

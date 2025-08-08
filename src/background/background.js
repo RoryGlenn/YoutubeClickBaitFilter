@@ -1,9 +1,39 @@
+/**
+ * @fileoverview YouTube ClickBait Filter - Background Service Worker
+ * Background script that handles extension lifecycle and badge management.
+ * 
+ * This service worker runs in the background and manages communication between
+ * the content script and popup, handles badge count updates, and maintains
+ * extension state across browser sessions.
+ * 
+ * Features:
+ * - Badge count management with visual indicators
+ * - Message routing between content scripts and popup
+ * - Tab lifecycle management and cleanup
+ * - Extension installation and update handling
+ * - Cross-tab communication support
+ * 
+ * @author Rory Glenn
+ * @version 1.0.0
+ * @since 2025-08-08
+ */
+
 // background.js
 
 /**
- * Update the extension badge with the blocked count
- * @param {number} count - The number of blocked elements
+ * Update the extension badge with the blocked count for a specific tab.
+ * Sets badge text, background color, and text color based on the count value.
+ * Uses color coding: red for high counts (>10), orange for lower counts.
+ * Handles tab cleanup and validates tab existence before updating.
+ * 
+ * @async
+ * @function updateBadge
+ * @param {number} count - The number of blocked elements (0-999+)
  * @param {number} tabId - The tab ID to update the badge for
+ * @returns {Promise<void>} Resolves when badge update is complete
+ * @example
+ * await updateBadge(15, 123); // Shows "15" with red background
+ * await updateBadge(150, 123); // Shows "99+" with red background
  */
 async function updateBadge(count, tabId) {
     try {

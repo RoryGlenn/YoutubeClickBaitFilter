@@ -1,3 +1,25 @@
+/**
+ * @fileoverview YouTube ClickBait Filter - Content Script
+ * Main content script that filters clickbait videos from YouTube pages.
+ * 
+ * This script runs on YouTube pages and performs real-time filtering of video content
+ * based on user-configured rules. It targets various YouTube layout structures including
+ * legacy and modern 2025+ layouts, filtering videos by title content that matches
+ * clickbait patterns, excessive punctuation, or uppercase text.
+ * 
+ * Features:
+ * - Real-time video filtering as content loads
+ * - Support for multiple YouTube layout structures
+ * - User-configurable filter rules via popup interface
+ * - Badge count updates showing filtered content
+ * - Persistent settings via Chrome storage sync
+ * - URL change detection for single-page app navigation
+ * 
+ * @author Rory Glenn
+ * @version 1.0.0
+ * @since 2025-08-08
+ */
+
 // filter.js
 
 import { CLICKBAIT_WORDS, CLICKBAIT_PHRASES } from '../shared/constants.js';
@@ -13,8 +35,16 @@ let userSettings = {
 };
 
 /**
- * Array of filter rules, mapping a userSettings flag to a test function.
- * @type {{flag: string, test: function(string): boolean}[]}
+ * Array of filter rules that map user settings to test functions.
+ * Each rule contains a flag (corresponding to a userSettings property) and a test function
+ * that determines if the given text should be filtered out.
+ * 
+ * @type {Array<{flag: string, test: function(string): boolean}>}
+ * @example
+ * // Check if text should be filtered
+ * const shouldBlock = filterRules.some(({flag, test}) => 
+ *   userSettings[flag] && test(videoTitle)
+ * );
  */
 export const filterRules = [
     {
@@ -39,7 +69,15 @@ export const filterRules = [
 
 /**
  * Load stored user settings from Chrome sync storage.
- * @returns {Promise<void>} Resolves when settings have been loaded.
+ * Retrieves user preferences for filtering behavior and updates the global userSettings object.
+ * Falls back to default settings if storage is unavailable or fails.
+ * 
+ * @async
+ * @function loadSettings
+ * @returns {Promise<void>} Resolves when settings have been loaded successfully
+ * @example
+ * await loadSettings();
+ * console.log(userSettings.enabled); // true/false based on user preference
  */
 function loadSettings() {
     return new Promise((resolve) => {
@@ -95,9 +133,16 @@ function checkUrlChange() {
 }
 
 /**
- * Determines whether a given text should be filtered out.
- * @param {string} text The title or label to test.
- * @returns {boolean} True if any enabled rule matches the text.
+ * Determines whether a given text should be filtered out based on active filter rules.
+ * Tests the provided text against all enabled filter rules (clickbait words, phrases,
+ * uppercase text, excessive punctuation) and returns true if any rule matches.
+ * 
+ * @function shouldFilter
+ * @param {string} text - The video title or label text to evaluate
+ * @returns {boolean} True if any enabled rule matches the text and it should be filtered
+ * @example
+ * shouldFilter("THIS IS INSANE!!!"); // true (uppercase + punctuation)
+ * shouldFilter("How to cook pasta"); // false (normal content)
  */
 export function shouldFilter(text) {
     return filterRules.some(
