@@ -23,7 +23,7 @@ A powerful Chrome extension that intelligently filters out clickbait, negative, 
 - 🔒 **Privacy First**: All filtering happens locally - no data collection or external servers
 
 ## 🚀 Quick Start
-
+ 
 ### Installation from Source
 
 1. **Clone the repository**
